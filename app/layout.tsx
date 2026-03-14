@@ -1,22 +1,39 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { APP_NAME } from "@/lib/constants";
-import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: APP_NAME,
-  description: "نظام إداري خاص لتوزيع المواد الغذائية",
+  title: "Ration Distribution Admin",
+  description: "نظام إدارة توزيع المواد الغذائية",
+
+  openGraph: {
+    title: "Ration Distribution Admin",
+    description: "نظام إدارة توزيع المواد الغذائية",
+    images: [
+      {
+        url: "/preview.png",
+        width: 1200,
+        height: 630,
+        alt: "Ration Distribution System",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Ration Distribution Admin",
+    description: "نظام إدارة توزيع المواد الغذائية",
+    images: ["/preview.png"],
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
-      <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
-        {children}
-        <Toaster richColors position="top-center" />
-      </body>
+    <html lang="ar" dir="rtl">
+      <body>{children}</body>
     </html>
   );
 }
