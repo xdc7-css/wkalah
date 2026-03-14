@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { exportFamilyReportAction } from "@/app/(dashboard)/dashboard/reports/actions";
 
@@ -41,8 +41,17 @@ export function ExportFamilyReportButton({
   }
 
   return (
-    <Button onClick={handleExport} variant="outline" className="gap-2">
-      <Download className="size-4" />
+    <Button
+      onClick={handleExport}
+      variant="outline"
+      disabled={loading}
+      className="h-11 w-full gap-2 rounded-2xl border-slate-200 bg-white text-slate-700 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 sm:w-auto"
+    >
+      {loading ? (
+        <Loader2 className="size-4 animate-spin" />
+      ) : (
+        <Download className="size-4" />
+      )}
       {loading ? "جارٍ التصدير..." : "تصدير تقرير العائلة"}
     </Button>
   );

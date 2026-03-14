@@ -1,10 +1,14 @@
 import * as React from "react";
 import Link from "next/link";
+import type { Route } from "next";
 
 type Variant = "default" | "outline" | "destructive" | "ghost";
 type Size = "default" | "sm" | "lg" | "icon";
 
-function getButtonClasses(variant: Variant = "default", size: Size = "default") {
+function getButtonClasses(
+  variant: Variant = "default",
+  size: Size = "default"
+) {
   const base =
     "inline-flex items-center justify-center gap-2 rounded-2xl font-medium transition whitespace-nowrap disabled:opacity-50 disabled:pointer-events-none";
 
@@ -49,7 +53,7 @@ export function Button({
 }
 
 type ButtonLinkProps = {
-  href: string;
+  href: Route;
   children: React.ReactNode;
   className?: string;
   variant?: Variant;
@@ -64,7 +68,10 @@ export function ButtonLink({
   size = "default",
 }: ButtonLinkProps) {
   return (
-    <Link href={href} className={`${getButtonClasses(variant, size)} ${className}`}>
+    <Link
+      href={href}
+      className={`${getButtonClasses(variant, size)} ${className}`}
+    >
       {children}
     </Link>
   );

@@ -60,7 +60,7 @@ export function DashboardMobileSidebar() {
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4">
-                  <DashboardSidebar mobile onNavigate={() => setOpen(false)} />
+                  <DashboardSidebar />
                 </div>
               </div>
             </aside>

@@ -2,28 +2,124 @@ import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentMonthYear } from "@/lib/utils";
 
+function extractDeliveredQuantity(item: any): number {
+  const possibleKeys = [
+    "delivered_quantity",
+    "quantity",
+    "qty",
+    "amount",
+    "item_quantity",
+    "delivered_total",
+    "total",
+  ];
+
+  for (const key of possibleKeys) {
+    const value = item?.[key];
+    const num = Number(value ?? 0);
+
+    if (Number.isFinite(num) && num > 0) {
+      return num;
+    }
+  }
+
+  return 0;
+}
+
+function extractItemName(item: any): string {
+  const possibleKeys = [
+    "item_name_snapshot",
+    "item_name",
+    "name",
+    "title",
+  ];
+
+  for (const key of possibleKeys) {
+    const value = String(item?.[key] ?? "").trim();
+    if (value) return value;
+  }
+
+  return "";
+}
+
 export const getDashboardStats = cache(async () => {
   const supabase = await createClient();
   const { month, year } = getCurrentMonthYear();
 
-  const [familiesRes, membersRes, deliveredRes, totalsRes] = await Promise.all([
-    supabase.from("families").select("id", { count: "exact", head: true }).eq("is_active", true),
-    supabase.from("families").select("members_count").eq("is_active", true),
-    supabase.from("monthly_distributions").select("id", { count: "exact", head: true }).eq("month", month).eq("year", year),
-    supabase.from("monthly_distribution_items_view").select("item_name_snapshot, delivered_total").eq("month", month).eq("year", year),
-  ]);
+  const [familiesRes, membersRes, deliveredRes, distributionsRes] =
+    await Promise.all([
+      supabase
+        .from("families")
+        .select("id", { count: "exact", head: true })
+        .eq("is_active", true),
+
+      supabase
+        .from("families")
+        .select("members_count")
+        .eq("is_active", true),
+
+      supabase
+        .from("monthly_distributions")
+        .select("id", { count: "exact", head: true })
+        .eq("month", month)
+        .eq("year", year),
+
+      supabase
+        .from("monthly_distributions")
+        .select(`
+          id,
+          month,
+          year,
+          monthly_distribution_items (*)
+        `)
+        .eq("month", month)
+        .eq("year", year),
+    ]);
+
+  if (familiesRes.error) throw familiesRes.error;
+  if (membersRes.error) throw membersRes.error;
+  if (deliveredRes.error) throw deliveredRes.error;
+  if (distributionsRes.error) throw distributionsRes.error;
 
   const totalFamilies = familiesRes.count ?? 0;
-  const totalMembers = (membersRes.data ?? []).reduce((sum, row) => sum + Number(row.members_count ?? 0), 0);
+
+  const totalMembers = (membersRes.data ?? []).reduce(
+    (sum, row) => sum + Number(row.members_count ?? 0),
+    0
+  );
+
   const deliveredFamilies = deliveredRes.count ?? 0;
   const pendingFamilies = Math.max(totalFamilies - deliveredFamilies, 0);
+
+  const totalsMap = new Map<string, number>();
+
+  for (const distribution of distributionsRes.data ?? []) {
+    const items = Array.isArray(distribution.monthly_distribution_items)
+      ? distribution.monthly_distribution_items
+      : [];
+
+    for (const item of items) {
+      const itemName = extractItemName(item);
+      const qty = extractDeliveredQuantity(item);
+
+      if (!itemName || qty <= 0) continue;
+
+      totalsMap.set(itemName, (totalsMap.get(itemName) ?? 0) + qty);
+    }
+  }
+
+  const totalsByItem = Array.from(totalsMap.entries())
+    .map(([item_name_snapshot, delivered_total]) => ({
+      item_name_snapshot,
+      delivered_total,
+    }))
+    .sort((a, b) => b.delivered_total - a.delivered_total);
 
   return {
     totalFamilies,
     totalMembers,
     deliveredFamilies,
     pendingFamilies,
-    totalsByItem: totalsRes.data ?? [],
+    totalsByItem,
     month,
     year,
   };
@@ -33,6 +129,7 @@ export async function getFamilies(search = "", page = 1, pageSize = 12) {
   const supabase = await createClient();
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
+
   let query = supabase
     .from("families")
     .select("*", { count: "exact" })
@@ -40,11 +137,14 @@ export async function getFamilies(search = "", page = 1, pageSize = 12) {
     .range(from, to);
 
   if (search.trim()) {
-    query = query.or(`family_code.ilike.%${search}%,family_name.ilike.%${search}%`);
+    query = query.or(
+      `family_code.ilike.%${search}%,family_name.ilike.%${search}%`
+    );
   }
 
   const { data, count, error } = await query;
   if (error) throw error;
+
   return { data: data ?? [], count: count ?? 0 };
 }
 
@@ -57,13 +157,19 @@ export async function getItems() {
 
 export async function getActiveItems() {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("items").select("*").eq("is_active", true).order("name");
+  const { data, error } = await supabase
+    .from("items")
+    .select("*")
+    .eq("is_active", true)
+    .order("name");
+
   if (error) throw error;
   return data ?? [];
 }
 
 export async function searchFamilies(query: string) {
   const supabase = await createClient();
+
   let builder = supabase
     .from("families")
     .select("id,family_code,family_name,members_count,phone,area,is_active")
@@ -72,17 +178,25 @@ export async function searchFamilies(query: string) {
     .limit(10);
 
   if (query.trim()) {
-    builder = builder.or(`family_code.ilike.%${query}%,family_name.ilike.%${query}%`);
+    builder = builder.or(
+      `family_code.ilike.%${query}%,family_name.ilike.%${query}%`
+    );
   }
 
   const { data, error } = await builder;
   if (error) throw error;
+
   return data ?? [];
 }
 
 export async function getFamilyById(id: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("families").select("*").eq("id", id).single();
+  const { data, error } = await supabase
+    .from("families")
+    .select("*")
+    .eq("id", id)
+    .single();
+
   if (error) throw error;
   return data;
 }
@@ -98,11 +212,16 @@ export async function getFamilyHistory(id: string) {
     .eq("family_id", id)
     .order("year", { ascending: false })
     .order("month", { ascending: false });
+
   if (error) throw error;
   return data ?? [];
 }
 
-export async function getDistributionByFamilyMonthYear(familyId: string, month: number, year: number) {
+export async function getDistributionByFamilyMonthYear(
+  familyId: string,
+  month: number,
+  year: number
+) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("monthly_distributions")
@@ -114,6 +233,7 @@ export async function getDistributionByFamilyMonthYear(familyId: string, month: 
     .eq("month", month)
     .eq("year", year)
     .maybeSingle();
+
   if (error) throw error;
   return data;
 }

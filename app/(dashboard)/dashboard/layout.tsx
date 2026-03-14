@@ -90,7 +90,7 @@ export default function DashboardLayout({
 
                     {/* Logout */}
                     <div className="flex items-center justify-end gap-3">
-                      <form action="/auth/signout" method="post" className="shrink-0">
+                      <form action="/signout" method="post" className="shrink-0">
                         <button
                           type="submit"
                           className="group inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm font-medium text-slate-100 shadow-[0_6px_20px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:border-violet-300/30 hover:bg-violet-500/15 hover:text-white hover:shadow-[0_12px_30px_rgba(139,92,246,0.18)] active:translate-y-0"

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import {
   ArchiveRestore,
   CalendarDays,
@@ -26,7 +27,7 @@ function BackupOption({
 }: {
   title: string;
   description: string;
-  href?: string;
+  href?: Route;
   buttonLabel?: string;
   icon: React.ElementType;
   variant?: "default" | "outline" | "ghost";
@@ -52,9 +53,9 @@ function BackupOption({
         <div className="mt-5 rounded-2xl border border-dashed border-violet-200 bg-violet-50 px-4 py-3 text-center text-sm font-medium text-violet-700">
           قريبًا
         </div>
-      ) : (
+      ) : href ? (
         <Link
-          href={href as string}
+          href={href}
           className={buttonVariants({
             variant,
             className:
@@ -64,7 +65,7 @@ function BackupOption({
           <Download className="size-4" />
           {buttonLabel}
         </Link>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -73,6 +74,9 @@ export default function BackupsPage() {
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
+
+  const monthlyHref =
+    `/api/export/monthly?month=${month}&year=${year}` as Route;
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -92,7 +96,7 @@ export default function BackupsPage() {
           <BackupOption
             title="تصدير كامل"
             description="يشمل جميع بيانات العوائل والمواد وسجلات التوزيع في ملف واحد منظم لغايات الأرشفة والنسخ الاحتياطي."
-            href="/api/export/all"
+            href={"/api/export/all" as Route}
             buttonLabel="تنزيل الملف"
             icon={ArchiveRestore}
             variant="default"
@@ -101,7 +105,7 @@ export default function BackupsPage() {
           <BackupOption
             title="تصدير الشهر الحالي"
             description={`إنشاء نسخة شهرية سريعة لسجلات التوزيع الخاصة بشهر ${month} / ${year} للمراجعة أو الأرشفة.`}
-            href={`/api/export/monthly?month=${month}&year=${year}`}
+            href={monthlyHref}
             buttonLabel="تنزيل التقرير"
             icon={CalendarDays}
             variant="outline"
@@ -110,7 +114,7 @@ export default function BackupsPage() {
           <BackupOption
             title="تحميل تقرير العائلة"
             description="تنزيل تقرير شامل لكل العوائل مع جميع سجلات التوزيع والمواد المسلّمة عبر الأشهر في ملف Excel واحد."
-            href="/api/export/families-report"
+            href={"/api/export/families-report" as Route}
             buttonLabel="تنزيل تقرير العوائل"
             icon={Users}
             variant="outline"
@@ -119,7 +123,7 @@ export default function BackupsPage() {
           <BackupOption
             title="استيراد البيانات"
             description="رفع ملف Excel واستيراد بيانات العوائل إلى النظام بشكل مباشر مع فحص أولي للحقول."
-            href="/dashboard/import"
+            href={"/dashboard/import" as Route}
             buttonLabel="فتح صفحة الاستيراد"
             icon={FileSpreadsheet}
             variant="outline"

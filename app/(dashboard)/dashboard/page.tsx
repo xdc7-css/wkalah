@@ -1,10 +1,17 @@
-import { ClipboardCheck, Hourglass, Package2, Users } from "lucide-react";
+import { ClipboardCheck, Hourglass, Users } from "lucide-react";
 import { getDashboardStats } from "@/lib/db";
 import { formatNumber, monthOptions } from "@/lib/utils";
 import { StatCard } from "@/components/stat-card";
+import { MonthlyDistributionPieChart } from "@/components/monthly-distribution-pie-chart";
 
 export default async function DashboardPage() {
   const stats = await getDashboardStats();
+
+  const chartData =
+    stats.totalsByItem?.map((item: any) => ({
+      name: item.item_name_snapshot,
+      value: Number(item.delivered_total ?? 0),
+    })) ?? [];
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -35,42 +42,27 @@ export default async function DashboardPage() {
         />
       </div>
 
+
       <section className="rounded-[28px] border border-slate-200/70 bg-white/85 shadow-sm">
         <div className="p-5 sm:p-6">
-          <div className="mb-5">
-            <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
-              إجمالي المواد الموزعة لهذا الشهر
-            </h2>
-            <p className="mt-1 text-sm text-slate-500">
-              {monthOptions[stats.month - 1]} {stats.year}
+          <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
+                المواد الموزعة هذا الشهر
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">
+                {monthOptions[stats.month - 1]} {stats.year}
+              </p>
+            </div>
+
+            <p className="text-sm text-slate-500">
+              مرّر الماوس على أي مادة حتى تظهر النسبة والتفاصيل
             </p>
           </div>
 
-          {stats.totalsByItem?.length ? (
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {stats.totalsByItem.map((item: any) => (
-                <div
-                  key={item.item_name_snapshot}
-                  className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-                >
-                  <div className="mb-3 flex items-center gap-2 text-violet-600">
-                    <Package2 className="size-4" />
-                    <span className="font-medium">
-                      {item.item_name_snapshot}
-                    </span>
-                  </div>
-
-                  <p className="text-2xl font-bold text-slate-900">
-                    {formatNumber(item.delivered_total)}
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm text-slate-500">
-              لا توجد بيانات توزيع لهذا الشهر بعد
-            </div>
-          )}
+         <div className="w-full min-w-0">
+  <MonthlyDistributionPieChart data={chartData} />
+</div>
         </div>
       </section>
     </div>

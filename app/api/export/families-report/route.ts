@@ -18,6 +18,28 @@ const monthNames: Record<number, string> = {
   12: "كانون الأول",
 };
 
+type FamilyRelation =
+  | {
+      id?: string | null;
+      family_code?: string | null;
+      family_name?: string | null;
+      area?: string | null;
+      phone?: string | null;
+      members_count?: number | null;
+      is_active?: boolean | null;
+    }
+  | Array<{
+      id?: string | null;
+      family_code?: string | null;
+      family_name?: string | null;
+      area?: string | null;
+      phone?: string | null;
+      members_count?: number | null;
+      is_active?: boolean | null;
+    }>
+  | null
+  | undefined;
+
 function safeSheetName(name: string) {
   return name.replace(/[\\/*?:[\]]/g, "").slice(0, 31) || "تقرير";
 }
@@ -39,6 +61,13 @@ function formatDate(dateString?: string | null) {
   const month = d.getMonth() + 1;
   const day = d.getDate();
   return `${year}/${month}/${day}`;
+}
+
+function getFamilyObject(families: FamilyRelation) {
+  if (Array.isArray(families)) {
+    return families[0] ?? null;
+  }
+  return families ?? null;
 }
 
 export async function GET() {
@@ -82,11 +111,17 @@ export async function GET() {
   const grouped = new Map<string, any[]>();
 
   for (const record of data ?? []) {
-    const familyId = record.families?.id;
+    const family = getFamilyObject(record.families);
+    const familyId = family?.id;
+
     if (!familyId) continue;
 
     if (!grouped.has(familyId)) grouped.set(familyId, []);
-    grouped.get(familyId)!.push(record);
+
+    grouped.get(familyId)!.push({
+      ...record,
+      family,
+    });
   }
 
   const workbook = new ExcelJS.Workbook();
@@ -94,9 +129,15 @@ export async function GET() {
   workbook.created = new Date();
 
   for (const [, records] of grouped) {
-    const family = records[0].families;
+    const family = records[0]?.family;
+
+    if (!family) continue;
+
+    const familyName = family.family_name ?? "عائلة";
+    const familyCode = family.family_code ?? "بدون رمز";
+
     const sheet = workbook.addWorksheet(
-      safeSheetName(`${family.family_name} - ${family.family_code}`)
+      safeSheetName(`${familyName} - ${familyCode}`)
     );
 
     sheet.views = [{ rightToLeft: true, state: "frozen", ySplit: 5 }];
@@ -112,9 +153,12 @@ export async function GET() {
     ];
 
     sheet.mergeCells("A1:F1");
-    sheet.getCell("A1").value = `سجل العائلة - ${family.family_name}`;
+    sheet.getCell("A1").value = `سجل العائلة - ${familyName}`;
     sheet.getCell("A1").font = { bold: true, size: 16 };
-    sheet.getCell("A1").alignment = { horizontal: "center", vertical: "middle" };
+    sheet.getCell("A1").alignment = {
+      horizontal: "center",
+      vertical: "middle",
+    };
     sheet.getCell("A1").fill = {
       type: "pattern",
       pattern: "solid",

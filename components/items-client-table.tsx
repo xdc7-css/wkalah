@@ -2,7 +2,13 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { Edit3, Search, Snowflake, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  Edit3,
+  Search,
+  Snowflake,
+  Trash2,
+} from "lucide-react";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,6 +32,7 @@ export function ItemsClientTable({ items }: { items: ItemRow[] }) {
   const [query, setQuery] = useState("");
   const [editingItem, setEditingItem] = useState<ItemRow | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [openActionsId, setOpenActionsId] = useState<string | null>(null);
 
   const [confirmState, setConfirmState] = useState<{
     open: boolean;
@@ -126,6 +133,8 @@ export function ItemsClientTable({ items }: { items: ItemRow[] }) {
       setLoadingId(null);
     }
   }
+
+  const closeActions = () => setOpenActionsId(null);
 
   return (
     <>
@@ -313,6 +322,7 @@ export function ItemsClientTable({ items }: { items: ItemRow[] }) {
             <div className="space-y-3 md:hidden">
               {filteredItems.map((item) => {
                 const busy = loadingId === item.id;
+                const actionsOpen = openActionsId === item.id;
 
                 return (
                   <div
@@ -320,21 +330,38 @@ export function ItemsClientTable({ items }: { items: ItemRow[] }) {
                     className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm"
                   >
                     <div className="mb-3 flex items-start justify-between gap-3">
-                      <div>
-                        <h3 className="text-base font-bold text-slate-900">
-                          {item.name}
-                        </h3>
-                        <p className="mt-1 text-sm text-slate-500">{item.unit}</p>
-                      </div>
-
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-violet-100 bg-gradient-to-br from-white to-violet-50 shadow-sm">
-                        <Image
-                          src={getItemIcon(item.name)}
-                          alt={item.name}
-                          width={24}
-                          height={24}
-                          className="object-contain"
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOpenActionsId((prev) => (prev === item.id ? null : item.id))
+                        }
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700"
+                      >
+                        <ChevronDown
+                          className={`size-4 transition-transform duration-200 ${
+                            actionsOpen ? "rotate-180" : ""
+                          }`}
                         />
+                        الخيارات
+                      </button>
+
+                      <div className="flex items-start gap-3">
+                        <div>
+                          <h3 className="text-base font-bold text-slate-900">
+                            {item.name}
+                          </h3>
+                          <p className="mt-1 text-sm text-slate-500">{item.unit}</p>
+                        </div>
+
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-violet-100 bg-gradient-to-br from-white to-violet-50 shadow-sm">
+                          <Image
+                            src={getItemIcon(item.name)}
+                            alt={item.name}
+                            width={24}
+                            height={24}
+                            className="object-contain"
+                          />
+                        </div>
                       </div>
                     </div>
 
@@ -368,66 +395,84 @@ export function ItemsClientTable({ items }: { items: ItemRow[] }) {
                       </Badge>
                     </div>
 
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="rounded-2xl border-slate-200 bg-white text-slate-700 transition-all duration-200 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700"
-                        onClick={() => setEditingItem(item)}
-                      >
-                        <Edit3 className="size-4" />
-                        تعديل
-                      </Button>
+                    <div
+                      className={`grid transition-all duration-300 ease-out ${
+                        actionsOpen
+                          ? "mt-4 grid-rows-[1fr] opacity-100"
+                          : "grid-rows-[0fr] opacity-0"
+                      }`}
+                    >
+                      <div className="overflow-hidden">
+                        <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-2">
+                          <div className="grid gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="h-11 w-full justify-start rounded-2xl border-slate-200 bg-white text-slate-700 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700"
+                              onClick={() => {
+                                setEditingItem(item);
+                                closeActions();
+                              }}
+                            >
+                              <Edit3 className="size-4" />
+                              تعديل المادة
+                            </Button>
 
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="rounded-2xl border-slate-200 bg-white text-slate-700 transition-all duration-200 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
-                        disabled={busy}
-                        onClick={() =>
-                          setConfirmState({
-                            open: true,
-                            title: `${item.is_active ? "تجميد" : "إعادة تفعيل"} المادة "${item.name}"`,
-                            description: item.is_active
-                              ? "سيتم إيقاف هذه المادة مؤقتًا من الظهور ضمن الاستخدامات اليومية."
-                              : "سيتم إعادة تفعيل هذه المادة وظهورها ضمن الاستخدامات اليومية.",
-                            variant: "freeze",
-                            onConfirm: async () => {
-                              setConfirmState({ open: false, title: "" });
-                              await handleToggle(item);
-                            },
-                          })
-                        }
-                      >
-                        <Snowflake className="size-4" />
-                        {item.is_active ? "تجميد" : "تفعيل"}
-                      </Button>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="h-11 w-full justify-start rounded-2xl border-slate-200 bg-white text-slate-700 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+                              disabled={busy}
+                              onClick={() => {
+                                closeActions();
+                                setConfirmState({
+                                  open: true,
+                                  title: `${item.is_active ? "تجميد" : "إعادة تفعيل"} المادة "${item.name}"`,
+                                  description: item.is_active
+                                    ? "سيتم إيقاف هذه المادة مؤقتًا من الظهور ضمن الاستخدامات اليومية."
+                                    : "سيتم إعادة تفعيل هذه المادة وظهورها ضمن الاستخدامات اليومية.",
+                                  variant: "freeze",
+                                  onConfirm: async () => {
+                                    setConfirmState({ open: false, title: "" });
+                                    await handleToggle(item);
+                                  },
+                                });
+                              }}
+                            >
+                              <Snowflake className="size-4" />
+                              {item.is_active ? "تجميد المادة" : "إعادة تفعيل المادة"}
+                            </Button>
 
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="rounded-2xl border-slate-200 bg-white text-slate-700 transition-all duration-200 hover:border-red-300 hover:bg-red-50 hover:text-red-700"
-                        disabled={busy}
-                        onClick={() =>
-                          setConfirmState({
-                            open: true,
-                            title: `حذف المادة "${item.name}"`,
-                            description: "هذا الإجراء لا يمكن التراجع عنه بسهولة.",
-                            variant: "delete",
-                            onConfirm: async () => {
-                              setConfirmState({ open: false, title: "" });
-                              await handleDelete(item);
-                            },
-                          })
-                        }
-                      >
-                        <Trash2 className="size-4" />
-                        حذف
-                      </Button>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="h-11 w-full justify-start rounded-2xl border-red-200 bg-red-50 text-red-700 hover:border-red-300 hover:bg-red-100"
+                              disabled={busy}
+                              onClick={() => {
+                                closeActions();
+                                setConfirmState({
+                                  open: true,
+                                  title: `حذف المادة "${item.name}"`,
+                                  description: "هذا الإجراء لا يمكن التراجع عنه بسهولة.",
+                                  variant: "delete",
+                                  onConfirm: async () => {
+                                    setConfirmState({ open: false, title: "" });
+                                    await handleDelete(item);
+                                  },
+                                });
+                              }}
+                            >
+                              <Trash2 className="size-4" />
+                              حذف المادة
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
+
+                    {busy ? (
+                      <p className="mt-3 text-xs text-slate-500">جارٍ تنفيذ العملية...</p>
+                    ) : null}
                   </div>
                 );
               })}
