@@ -35,96 +35,62 @@ export function DashboardSidebar() {
   const pathname = usePathname();
 
   return (
-    <>
-      <div className="mb-4 lg:hidden">
-        <div className="glass rounded-3xl border border-white/60 p-3 shadow-glass">
-          <div className="mb-3 flex items-center gap-3 rounded-2xl bg-white/70 p-3">
-            <div className="rounded-2xl bg-primary/10 p-2">
-              <Image
-                src="/icons/items/calculator.png"
-                alt="logo"
-                width={48}
-                height={48}
-              />
-            </div>
-
-            <div className="min-w-0">
-              <p className="truncate font-semibold">{APP_NAME}</p>
-              <p className="text-xs text-muted-foreground">إدارة داخلية خاصة</p>
-            </div>
-          </div>
-
-          <nav className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {links.map((link) => {
-              const Icon = link.icon;
-              const active =
-                pathname === link.href || pathname.startsWith(`${link.href}/`);
-
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "flex min-h-16 flex-col items-center justify-center gap-2 rounded-2xl px-3 py-3 text-center text-xs font-medium transition",
-                    active
-                      ? "bg-primary text-white shadow-soft"
-                      : "bg-white/70 hover:bg-white"
-                  )}
-                >
-                  <Icon className="size-4 shrink-0" />
-                  <span className="leading-5">{link.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
-
-      <aside className="glass sticky top-4 hidden h-[calc(100vh-2rem)] w-full max-w-[300px] shrink-0 flex-col rounded-3xl border border-white/60 p-5 shadow-glass lg:flex">
-        <div className="mb-8 flex items-center gap-3 rounded-2xl bg-white/70 p-4">
-          <div className="rounded-2xl bg-primary/10 p-2">
+    <div className="flex h-full flex-col p-5">
+      <div className="mb-10 overflow-hidden rounded-[32px] border border-white/10 bg-[#0F1B33]/60 p-4 shadow-xl ring-1 ring-white/5 backdrop-blur-xl">
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600/20 to-indigo-600/10 shadow-lg ring-1 ring-violet-400/20">
             <Image
               src="/icons/items/calculator.png"
               alt="logo"
-              width={64}
-              height={64}
+              width={56}
+              height={56}
+              className="h-10 w-10 object-contain brightness-110 transition-transform duration-500 hover:rotate-12"
             />
           </div>
 
-         <div className="min-w-0 flex-1">
-  <p className="text-right text-lg font-extrabold leading-7 text-slate-900 whitespace-normal break-words">
-    {APP_NAME}
-  </p>
-  <p className="mt-1 text-sm text-slate-500">
-    إدارة داخلية خاصة
-  </p>
-</div>
+          <div className="min-w-0 flex-1">
+            <p className="text-right text-[15px] font-black leading-snug text-[#F8FAFC] font-heading">
+              {APP_NAME}
+            </p>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">إدارة داخلية خاصة</p>
+          </div>
         </div>
+      </div>
 
-        <nav className="space-y-2">
-          {links.map((link) => {
-            const Icon = link.icon;
-            const active =
-              pathname === link.href || pathname.startsWith(`${link.href}/`);
+      <nav className="space-y-1.5">
+        {links.map((link) => {
+          const Icon = link.icon;
+          const active = pathname === link.href;
 
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition",
-                  active
-                    ? "bg-primary text-white shadow-soft"
-                    : "hover:bg-white/70"
-                )}
-              >
-                <Icon className="size-4 shrink-0" />
-                <span>{link.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-      </aside>
-    </>
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-300",
+                active
+                  ? "bg-gradient-to-r from-violet-600 to-indigo-500 text-white shadow-[0_8px_20px_rgba(124,58,237,0.3)]"
+                  : "text-slate-400 hover:bg-white/5 hover:text-white"
+              )}
+            >
+              <Icon className={cn(
+                "size-5 shrink-0 transition-transform duration-300 group-hover:scale-110",
+                active ? "text-white" : "text-slate-500 group-hover:text-violet-400"
+              )} />
+              <span>{link.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="mt-auto pt-8">
+        <div className="rounded-2xl bg-gradient-to-br from-violet-600/10 to-indigo-500/5 p-4 ring-1 ring-white/5">
+          <p className="text-xs font-bold text-violet-400">النظام الموحد</p>
+          <p className="mt-1 text-[10px] text-slate-500 leading-relaxed">
+            تأكد من مراجعة التقارير الدورية لضمان دقة البيانات الموزعة.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }

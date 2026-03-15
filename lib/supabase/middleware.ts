@@ -40,11 +40,11 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const { data } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
   const pathname = request.nextUrl.pathname;
   const isAuthPage = authRoutes.some((route) => pathname.startsWith(route));
 
-  if (!data.user && !isAuthPage) {
+  if ((error || !data.user) && !isAuthPage) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);

@@ -42,6 +42,10 @@ export default {
       backgroundImage: {
         radial: "radial-gradient(var(--tw-gradient-stops))",
       },
+      fontFamily: {
+        heading: ["var(--font-cairo)"],
+        body: ["var(--font-body)"],
+      },
     },
   },
   plugins: [],

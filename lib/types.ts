@@ -11,6 +11,10 @@ export type Family = {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  created_by?: string | null;
+  updated_by?: string | null;
+  deleted_by?: string | null;
+  action_timestamp?: string | null;
 };
 
 export type Item = {
@@ -22,6 +26,10 @@ export type Item = {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  created_by?: string | null;
+  updated_by?: string | null;
+  deleted_by?: string | null;
+  action_timestamp?: string | null;
 };
 
 export type MonthlyDistribution = {
@@ -33,6 +41,10 @@ export type MonthlyDistribution = {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  created_by?: string | null;
+  updated_by?: string | null;
+  deleted_by?: string | null;
+  action_timestamp?: string | null;
 };
 
 export type MonthlyDistributionItem = {
@@ -46,4 +58,17 @@ export type MonthlyDistributionItem = {
   calculated_quantity: number;
   delivered_quantity: number;
   created_at: string;
+};
+
+export type AuditLog = {
+  id: string;
+  admin_id: string;
+  admin_email?: string;
+  action_type: "CREATE" | "UPDATE" | "DELETE" | "EXPORT";
+  entity_type: "FAMILY" | "ITEM" | "DISTRIBUTION" | "REPORT" | "SYSTEM";
+  entity_id?: string;
+  old_data_snapshot?: Record<string, any>;
+  new_data_snapshot?: Record<string, any>;
+  created_at: string;
+  ip_address?: string;
 };

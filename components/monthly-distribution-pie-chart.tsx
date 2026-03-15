@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { toArabicDigits } from "@/lib/utils";
+
 type DistributionItem = {
   name: string;
   value: number;
@@ -27,37 +29,7 @@ const COLORS = [
   "#84cc16",
 ];
 
-const ITEM_ICONS_MAP: Record<string, string> = {
-  "تمن": "/icons/items/rice.png",
-  "رز": "/icons/items/rice.png",
-  "حمص": "/icons/items/vegetarian.png",
-  "زيت": "/icons/items/olive-oil.png",
-  "شكر": "/icons/items/sugar.png",
-  "سكر": "/icons/items/sugar.png",
-  "طحين": "/icons/items/wheat.png",
-  "عدس": "/icons/items/lentils.png",
-  "فاصوليا": "/icons/items/bean.png",
-  "معجون": "/icons/items/tomato.png",
-  "معجون كبير": "/icons/items/tomato-big.png",
-};
-
-function normalizeArabic(text: string) {
-  return text
-    .trim()
-    .replace(/[أإآ]/g, "ا")
-    .replace(/ة/g, "ه")
-    .replace(/ى/g, "ي")
-    .replace(/\s+/g, " ");
-}
-
-function getItemIcon(name: string): string {
-  const normalized = normalizeArabic(name);
-
-  if (ITEM_ICONS_MAP[normalized]) return ITEM_ICONS_MAP[normalized];
-
-  const key = Object.keys(ITEM_ICONS_MAP).find((k) => normalized.includes(k));
-  return key ? ITEM_ICONS_MAP[key] : "/icons/items/default.png";
-}
+import { getItemIcon } from "@/lib/item-icons";
 
 export function MonthlyDistributionPieChart({ data }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -96,15 +68,15 @@ export function MonthlyDistributionPieChart({ data }: Props) {
 
   if (!chartData.length) {
     return (
-      <div className="rounded-[28px] border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
-        لا توجد بيانات توزيع صالحة لهذا الشهر بعد
-      </div>
+    <div className="rounded-[32px] border border-white/10 bg-white/5 p-8 text-center text-sm text-slate-400 shadow-sm">
+      لا توجد بيانات توزيع صالحة لهذا الشهر بعد
+    </div>
     );
   }
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 p-2 md:p-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-      <div className="order-1 min-w-0 rounded-[32px] border border-slate-100 bg-white p-4 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.08)] md:p-8">
+    <div className="order-1 min-w-0 rounded-[32px] border border-white/10 bg-white/5 p-4 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.15)] md:p-8">
         <div className="relative h-[320px] w-full min-w-0 overflow-hidden md:h-[420px]">
           {mounted ? (
             <ResponsiveContainer width="99%" height="100%" minWidth={0}>
@@ -161,7 +133,7 @@ export function MonthlyDistributionPieChart({ data }: Props) {
                 transition={{ duration: 0.22 }}
                 className="flex flex-col items-center"
               >
-                <div className="flex h-20 w-20 items-center justify-center rounded-full border border-slate-100 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.12)] md:h-28 md:w-28">
+                <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-slate-900/50 shadow-[0_8px_30px_rgba(0,0,0,0.5)] backdrop-blur-md md:h-28 md:w-28">
                   <Image
                     src={activeItem?.iconSrc || "/icons/items/default.png"}
                     alt={activeItem?.name || "item"}
@@ -172,7 +144,7 @@ export function MonthlyDistributionPieChart({ data }: Props) {
                 </div>
 
                 <div className="mt-3 text-center">
-                  <h3 className="text-lg font-black leading-tight text-slate-800 md:text-xl">
+                  <h3 className="text-lg font-black leading-tight text-white md:text-xl">
                     {activeItem?.name}
                   </h3>
                   <p
@@ -201,8 +173,8 @@ export function MonthlyDistributionPieChart({ data }: Props) {
                 whileHover={{ y: -2 }}
                 className={`flex cursor-pointer items-center justify-between rounded-3xl border p-4 transition-all duration-300 ${
                   isActive
-                    ? "border-slate-200 bg-white shadow-lg ring-1 ring-slate-100"
-                    : "border-slate-100 bg-white"
+                    ? "border-violet-500/30 bg-violet-500/10 shadow-lg ring-1 ring-violet-500/20"
+                    : "border-white/5 bg-white/5"
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -217,11 +189,11 @@ export function MonthlyDistributionPieChart({ data }: Props) {
                   </div>
 
                   <div className="min-w-0">
-                    <h4 className="truncate text-[15px] font-bold text-slate-800">
+                    <h4 className="truncate text-[15px] font-bold text-white">
                       {item.name}
                     </h4>
                     <p className="text-xs font-semibold text-slate-400">
-                      {item.value.toLocaleString("ar-IQ")} وحدة
+                      {toArabicDigits(item.value.toLocaleString("en-US"))} وحدة
                     </p>
                   </div>
                 </div>
@@ -243,7 +215,7 @@ export function MonthlyDistributionPieChart({ data }: Props) {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           whileHover={{ y: -3, scale: 1.01 }}
-          className="relative mt-auto overflow-hidden rounded-[30px] border border-violet-100/50 bg-white p-6 shadow-[0_20px_40px_-15px_rgba(139,92,246,0.1)]"
+          className="relative mt-auto overflow-hidden rounded-[30px] border border-white/10 bg-white/5 p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] backdrop-blur-xl"
         >
           <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-violet-400/10 blur-2xl" />
 
@@ -261,8 +233,8 @@ export function MonthlyDistributionPieChart({ data }: Props) {
               </div>
 
               <div className="flex flex-wrap items-baseline gap-2">
-                <span className="text-4xl font-black tracking-tight text-slate-800">
-                  {totalDistributed.toLocaleString("ar-IQ")}
+                <span className="text-4xl font-black tracking-tight text-white">
+                  {toArabicDigits(totalDistributed.toLocaleString("en-US"))}
                 </span>
                 <span className="text-sm font-bold text-slate-400">
                   وحدة إجمالية
@@ -270,7 +242,7 @@ export function MonthlyDistributionPieChart({ data }: Props) {
               </div>
             </div>
 
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-violet-100 bg-violet-50 shadow-sm">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 shadow-sm">
               <svg
                 className="h-7 w-7 text-violet-600"
                 fill="none"

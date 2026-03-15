@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { monthlyDistributionSchema } from "@/lib/validations";
-import { searchFamilies } from "@/lib/db";
+import { searchFamilies, getFamilyByCode } from "@/lib/db";
 
 type DistributionActionResult = {
   error: string;
@@ -12,6 +12,10 @@ type DistributionActionResult = {
 
 export async function searchFamiliesApi(query: string) {
   return searchFamilies(query);
+}
+
+export async function getFamilyByCodeApi(code: string) {
+  return getFamilyByCode(code);
 }
 
 export async function saveDistributionAction(

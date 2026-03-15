@@ -47,26 +47,26 @@ export default function LoginPage() {
           <div className="p-3">
             <div className="rounded-[28px] border border-white/10 bg-slate-900/40 p-3 sm:p-4">
               {/* Header box */}
-              <div className="mb-5 overflow-hidden rounded-[26px] border border-violet-300/15 bg-gradient-to-l from-violet-500/20 via-fuchsia-500/10 to-indigo-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+              <div className="mb-4 overflow-hidden rounded-[26px] border border-violet-300/15 bg-gradient-to-l from-violet-500/20 via-fuchsia-500/10 to-indigo-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:mb-5">
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-300/50 to-transparent" />
-                <div className="px-5 py-6 text-center sm:px-6">
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl border border-violet-300/20 bg-white/10 text-violet-200 shadow-inner shadow-white/10">
-                    <ShieldCheck className="size-8" />
+                <div className="px-4 py-5 text-center sm:px-6 sm:py-6">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-violet-300/20 bg-white/10 text-violet-200 shadow-inner shadow-white/10 sm:mb-4 sm:h-16 sm:w-16 sm:rounded-3xl">
+                    <ShieldCheck className="size-6 sm:size-8" />
                   </div>
 
-                  <h1 className="text-2xl font-extrabold tracking-tight text-white">
+                  <h1 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">
                     {APP_NAME}
                   </h1>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">
+                  <p className="mt-1.5 text-[11px] leading-relaxed text-slate-300 sm:mt-2 sm:text-sm sm:leading-6">
                     تسجيل دخول خاص بالإدارة فقط للوصول إلى لوحة التحكم
                   </p>
                 </div>
               </div>
 
               {/* Form */}
-              <form action={loginAction} className="space-y-4">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-slate-200">
+              <form action={loginAction} className="space-y-3 sm:space-y-4">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <label className="block text-xs font-bold text-slate-200 uppercase tracking-wider sm:text-sm sm:font-medium">
                     البريد الإلكتروني
                   </label>
                   <div className="relative">
@@ -76,13 +76,13 @@ export default function LoginPage() {
                       name="email"
                       required
                       placeholder="admin@example.com"
-                      className="h-12 rounded-2xl border-white/10 bg-white/5 pr-11 text-right text-white placeholder:text-slate-400 focus:border-violet-400/40 focus:ring-2 focus:ring-violet-500/20"
+                      className="h-11 rounded-xl border-white/10 bg-white/5 pr-11 text-right text-white placeholder:text-slate-400 focus:border-violet-400/40 focus:ring-2 focus:ring-violet-500/20 sm:h-12 sm:rounded-2xl"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-slate-200">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <label className="block text-xs font-bold text-slate-200 uppercase tracking-wider sm:text-sm sm:font-medium">
                     كلمة المرور
                   </label>
                   <div className="relative">
@@ -92,20 +92,20 @@ export default function LoginPage() {
                       name="password"
                       required
                       placeholder="••••••••"
-                      className="h-12 rounded-2xl border-white/10 bg-white/5 pr-11 text-right text-white placeholder:text-slate-400 focus:border-violet-400/40 focus:ring-2 focus:ring-violet-500/20"
+                      className="h-11 rounded-xl border-white/10 bg-white/5 pr-11 text-right text-white placeholder:text-slate-400 focus:border-violet-400/40 focus:ring-2 focus:ring-violet-500/20 sm:h-12 sm:rounded-2xl"
                     />
                   </div>
                 </div>
 
                 <Button
-                  className="h-12 w-full rounded-2xl border border-violet-300/20 bg-gradient-to-l from-violet-500 to-fuchsia-500 text-sm font-bold text-white shadow-[0_10px_30px_rgba(139,92,246,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:from-violet-400 hover:to-fuchsia-400 hover:shadow-[0_14px_35px_rgba(139,92,246,0.45)] active:translate-y-0"
+                  className="h-11 w-full rounded-xl border border-violet-300/20 bg-gradient-to-l from-violet-500 to-fuchsia-500 text-xs font-bold text-white shadow-[0_10px_30px_rgba(139,92,246,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:from-violet-400 hover:to-fuchsia-400 hover:shadow-[0_14px_35px_rgba(139,92,246,0.45)] active:translate-y-0 sm:h-12 sm:rounded-2xl sm:text-sm"
                   type="submit"
                 >
                   تسجيل الدخول
                 </Button>
 
-                <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-center">
-                  <p className="text-xs leading-6 text-slate-300">
+                <div className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-center sm:rounded-2xl sm:py-3">
+                  <p className="text-[10px] leading-relaxed text-slate-300 sm:text-xs sm:leading-6">
                     تم تعطيل التسجيل العام. أنشئ المستخدم الأول من Supabase Auth.
                   </p>
                 </div>

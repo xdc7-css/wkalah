@@ -2,6 +2,8 @@
 
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { toArabicDigits } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Item } from "@/lib/types";
 import { upsertItemAction } from "@/server/item-actions";
 import { Input } from "@/components/ui/input";
@@ -29,9 +31,23 @@ function SubmitButton() {
   return (
     <Button
       type="submit"
-      className="h-10 w-full rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(139,92,246,0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(139,92,246,0.28)] active:translate-y-0 disabled:opacity-80 sm:h-11 sm:w-auto sm:min-w-[150px]"
+      disabled={pending}
+      className="group relative h-14 w-full overflow-hidden rounded-[20px] bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] px-8 text-base font-black text-white shadow-[0_20px_40px_rgba(139,92,246,0.15)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_25px_50px_rgba(139,92,246,0.25)] active:scale-95 disabled:opacity-70"
     >
-      {pending ? "جارٍ الحفظ..." : "حفظ المادة"}
+      {/* Shine effect */}
+      <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
+      
+      {pending ? (
+        <span className="relative flex items-center justify-center gap-3">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          <span className="tracking-tight">جارٍ الحفظ...</span>
+        </span>
+      ) : (
+        <span className="relative flex items-center justify-center gap-3">
+          <CheckCircle2 className="size-5 transition-transform group-hover:scale-110" />
+          <span className="tracking-tight text-white">حفظ المادة</span>
+        </span>
+      )}
     </Button>
   );
 }
@@ -44,8 +60,8 @@ function FieldLabel({
   children: React.ReactNode;
 }) {
   return (
-    <label className="mb-1.5 flex items-center gap-2 text-xs font-medium text-slate-700 sm:text-sm">
-      <span className="text-slate-400">{icon}</span>
+    <label className="mb-1.5 flex items-center gap-2 text-xs font-medium text-slate-300 sm:text-sm">
+      <span className="text-slate-500">{icon}</span>
       {children}
     </label>
   );
@@ -64,7 +80,7 @@ function StepIndicator({
   ];
 
   return (
-    <div className="rounded-[18px] border border-slate-200/70 bg-white p-2 shadow-sm sm:rounded-[20px] sm:p-2.5">
+    <div className="rounded-[24px] border border-white/[0.05] bg-white/[0.02] p-2 shadow-inner backdrop-blur-md">
       <div className="grid grid-cols-2 gap-2">
         {steps.map((step) => {
           const isActive = currentStep === step.id;
@@ -75,18 +91,21 @@ function StepIndicator({
               key={step.id}
               type="button"
               onClick={() => onStepClick(step.id)}
-              className={`flex min-w-0 flex-col items-center justify-center rounded-xl border px-2 py-2 text-center transition-all ${
+              className={`flex min-w-0 flex-col items-center justify-center rounded-[18px] border py-2.5 text-center transition-all duration-300 ${
                 isDone
-                  ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                  ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-400"
                   : isActive
-                    ? "border-violet-200 bg-violet-50 text-violet-700"
-                    : "border-slate-200 bg-slate-50 text-slate-400"
+                    ? "border-violet-500/30 bg-violet-600/10 text-[#F8FAFC] shadow-[0_0_20px_rgba(139,92,246,0.1)] ring-1 ring-white/10"
+                    : "border-transparent bg-transparent text-[#526077] hover:bg-white/[0.03] hover:text-[#94A3B8]"
               }`}
             >
-              <span className="mb-1 flex h-6 w-6 items-center justify-center rounded-full border border-current/20 text-[11px] font-bold">
+              <span className={cn(
+                "mb-1 flex h-6 w-6 items-center justify-center rounded-full border text-[11px] font-black transition-colors",
+                isActive ? "border-violet-400 text-violet-400" : "border-current text-current"
+              )}>
                 {isDone ? <CheckCircle2 className="size-3.5" /> : step.id}
               </span>
-              <span className="truncate text-[10px] font-medium sm:text-xs">
+              <span className="truncate text-[10px] font-black uppercase tracking-wider sm:text-xs">
                 {step.title}
               </span>
             </button>
@@ -124,7 +143,7 @@ function UnitSelector({
                 className="peer sr-only"
               />
 
-              <div className="flex h-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-medium text-slate-700 transition-all duration-200 hover:border-violet-200 hover:bg-violet-50 peer-checked:border-violet-300 peer-checked:bg-violet-50 peer-checked:text-violet-700 peer-checked:shadow-[0_0_0_1px_rgba(139,92,246,0.12)] sm:h-11 sm:text-sm">
+              <div className="flex h-11 items-center justify-center rounded-xl border border-white/[0.08] bg-[#13213D]/40 px-3 text-xs font-black text-[#94A3B8] transition-all duration-300 hover:border-violet-500/30 hover:bg-[#182742] peer-checked:border-violet-500/40 peer-checked:bg-gradient-to-br peer-checked:from-violet-600/15 peer-checked:to-indigo-600/15 peer-checked:text-violet-400 peer-checked:shadow-[0_8px_20px_rgba(139,92,246,0.1)] sm:h-12 sm:text-sm">
                 {unit}
               </div>
             </label>
@@ -145,8 +164,6 @@ export function ItemForm({
   onSuccess?: () => void;
 }) {
   const [state, formAction] = useActionState(upsertItemAction, initialState);
-  const [step, setStep] = useState(1);
-
   const [nameValue, setNameValue] = useState(item?.name ?? "");
   const [unitValue, setUnitValue] = useState(item?.unit ?? "كغم");
   const [quantityValue, setQuantityValue] = useState(
@@ -163,193 +180,145 @@ export function ItemForm({
     return () => window.clearTimeout(timeout);
   }, [state.success, onSuccess]);
 
-  const stepMeta = useMemo(
-    () => [
-      {
-        id: 1,
-        title: "البيانات الأساسية",
-        description: "أدخل اسم المادة وحدد الوحدة.",
-        icon: <Boxes className="size-4" />,
-      },
-      {
-        id: 2,
-        title: "الاحتساب والحفظ",
-        description: "أدخل الكمية الافتراضية وحدد نوع الحساب ثم احفظ.",
-        icon: <Settings2 className="size-4" />,
-      },
-    ],
-    []
-  );
-
-  const currentMeta = stepMeta[step - 1];
-
-  const nextStep = () => {
-    if (!nameValue.trim() || !unitValue.trim()) return;
-    setStep(2);
-  };
-
-  const prevStep = () => setStep(1);
-
   const formBody = (
-    <CardContent className={embedded ? "p-0" : "p-4 sm:p-5"}>
-      <form action={formAction} className="space-y-3 sm:space-y-4" noValidate>
+    <CardContent className={embedded ? "p-3 sm:p-4" : "p-4 sm:p-6 md:p-8"}>
+      <form action={formAction} className="space-y-6" noValidate>
         <input type="hidden" name="id" value={item?.id ?? ""} />
         <input type="hidden" name="name" value={nameValue} />
         <input type="hidden" name="unit" value={unitValue} />
         <input type="hidden" name="default_quantity" value={quantityValue} />
         <input type="hidden" name="calculation_type" value={calculationType} />
 
-        <StepIndicator currentStep={step} onStepClick={setStep} />
-
-        <div className="rounded-[18px] border border-slate-200/70 bg-white p-3 shadow-sm sm:rounded-[22px] sm:p-4">
-          <div className="mb-2">
-            <div className="flex items-center gap-2 text-violet-700">
-              {currentMeta.icon}
-              <span className="text-[11px] font-semibold sm:text-xs">
-                الخطوة {step} من 2
-              </span>
+        <div className="space-y-6">
+          {/* Section 1: Basic Info */}
+          <div className="space-y-4 rounded-[28px] border border-white/10 bg-white/[0.03] p-6 transition-all duration-300 hover:bg-white/[0.05] hover:border-violet-500/20">
+            <div className="flex items-center gap-2.5 text-violet-400">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 ring-1 ring-violet-500/20">
+                <Boxes className="size-4" />
+              </div>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] font-heading">البيانات الأساسية</h4>
             </div>
+            
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="col-span-full">
+                <FieldLabel icon={<Boxes className="size-4" />}>اسم المادة</FieldLabel>
+                <Input
+                  value={nameValue}
+                  onChange={(e) => setNameValue(e.target.value)}
+                  placeholder="مثال: فاصوليا"
+                  className="h-12 rounded-2xl border-white/[0.08] bg-[#0F1B33]/60 text-base font-bold text-[#F8FAFC] placeholder:text-[#475569] focus:border-violet-500/40 focus:ring-4 focus:ring-violet-500/5 shadow-sm"
+                />
+              </div>
 
-            <h4 className="mt-1 text-sm font-bold text-slate-900 sm:text-base">
-              {currentMeta.title}
-            </h4>
-            <p className="mt-1 text-xs leading-5 text-slate-500 sm:text-sm sm:leading-6">
-              {currentMeta.description}
-            </p>
-          </div>
-
-          <div className="animate-[fadeIn_.22s_ease-out]">
-            {step === 1 ? (
-              <div className="grid grid-cols-1 gap-3">
-                <div>
-                  <FieldLabel icon={<Boxes className="size-4" />}>
-                    اسم المادة
-                  </FieldLabel>
-                  <Input
-                    value={nameValue}
-                    onChange={(e) => setNameValue(e.target.value)}
-                    placeholder="مثال: فاصوليا"
-                    className="h-10 rounded-xl border-slate-200 bg-slate-50 text-sm text-slate-900 placeholder:text-slate-400 focus:border-violet-300 focus:ring-2 focus:ring-violet-100 sm:h-11"
-                  />
-                </div>
-
+              <div className="col-span-full">
                 <UnitSelector value={unitValue} onChange={setUnitValue} />
               </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-3">
-                <div>
-                  <FieldLabel icon={<PackagePlus className="size-4" />}>
-                    الكمية الافتراضية
-                  </FieldLabel>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min={0}
-                    value={quantityValue}
-                    onChange={(e) => setQuantityValue(e.target.value)}
-                    className="h-10 rounded-xl border-slate-200 bg-slate-50 text-sm text-slate-900 placeholder:text-slate-400 focus:border-violet-300 focus:ring-2 focus:ring-violet-100 sm:h-11"
-                  />
-                </div>
-
-                <div>
-                  <FieldLabel icon={<Calculator className="size-4" />}>
-                    نوع الحساب
-                  </FieldLabel>
-                  <Select
-                    value={calculationType}
-                    onChange={(e) =>
-                      setCalculationType(
-                        e.target.value as "per_person" | "per_family"
-                      )
-                    }
-                    className="h-10 w-full rounded-xl border-slate-200 bg-slate-50 text-sm text-slate-900 focus:border-violet-300 focus:ring-2 focus:ring-violet-100 sm:h-11"
-                  >
-                    <option value="per_person">لكل فرد</option>
-                    <option value="per_family">لكل عائلة</option>
-                  </Select>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
 
-          {step === 2 ? (
-            <div className="mt-3 rounded-[18px] border border-slate-200/70 bg-slate-50 p-3">
-              <label
-                htmlFor="item_active"
-                className="flex cursor-pointer items-start gap-3"
-              >
+          {/* Section 2: Calculation Settings */}
+          <div className="space-y-4 rounded-[28px] border border-white/10 bg-white/[0.03] p-6 transition-all duration-300 hover:bg-white/[0.05] hover:border-violet-500/20">
+            <div className="flex items-center gap-2.5 text-violet-400">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 ring-1 ring-violet-500/20">
+                <Calculator className="size-4" />
+              </div>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] font-heading">إعدادات الاحتساب</h4>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div>
+                <FieldLabel icon={<PackagePlus className="size-4" />}>الكمية الافتراضية</FieldLabel>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min={0}
+                  value={quantityValue}
+                  onChange={(e) => setQuantityValue(e.target.value)}
+                  className="h-12 rounded-2xl border-white/[0.08] bg-[#0F1B33]/60 text-base font-bold text-[#F8FAFC] placeholder:text-[#475569] focus:border-violet-500/40 focus:ring-4 focus:ring-violet-500/5 shadow-sm"
+                />
+              </div>
+
+              <div>
+                <FieldLabel icon={<Calculator className="size-4" />}>نوع الحساب</FieldLabel>
+                <Select
+                  value={calculationType}
+                  onChange={(e) => setCalculationType(e.target.value as "per_person" | "per_family")}
+                  className="h-12 w-full rounded-2xl border-white/[0.08] bg-[#0F1B33]/60 text-base font-bold text-[#F8FAFC] focus:border-violet-500/40 focus:ring-4 focus:ring-violet-500/5 shadow-sm"
+                >
+                  <option value="per_person" className="bg-[#0F1B33]">لكل فرد</option>
+                  <option value="per_family" className="bg-[#0F1B33]">لكل عائلة</option>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 3: Status */}
+          <div className={cn(
+            "rounded-[32px] border p-6 shadow-xl transition-all duration-500",
+            isActive 
+              ? "border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10" 
+              : "border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10"
+          )}>
+            <label htmlFor="item_active" className="flex cursor-pointer items-start gap-4">
+              <div className="mt-1 relative flex items-center h-6">
                 <input
                   id="item_active"
                   name="is_active"
                   type="checkbox"
                   checked={isActive}
                   onChange={(e) => setIsActive(e.target.checked)}
-                  className="mt-1 size-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                  className={cn(
+                    "size-6 rounded-lg border-white/20 bg-white/5 transition-all ring-offset-0",
+                    isActive ? "text-emerald-500 focus:ring-emerald-500/20" : "text-rose-500 focus:ring-rose-500/20"
+                  )}
                 />
+              </div>
+              <div className="flex-1">
+                <p className="text-lg font-black text-[#F8FAFC] font-heading leading-none">تفعيل المادة</p>
+                <p className="mt-2 text-sm font-medium text-[#94A3B8] leading-relaxed">
+                  {isActive 
+                    ? "ستظهر المادة ضمن القوائم والنماذج المعتمدة في النظام."
+                    : "سيتم إخفاء المادة مؤقتاً من قوائم التوزيع والتقارير."}
+                </p>
+              </div>
+            </label>
+          </div>
 
-                <div>
-                  <p className="text-sm font-semibold text-slate-800">
-                    تفعيل المادة
-                  </p>
-                  <p className="mt-1 text-xs leading-5 text-slate-500">
-                    عند التفعيل ستظهر المادة ضمن القوائم والنماذج المعتمدة.
-                  </p>
-                </div>
-              </label>
-            </div>
-          ) : null}
-
-          {state.error ? (
-            <div className="mt-3 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs text-red-700 sm:text-sm">
-              <AlertCircle className="mt-0.5 size-4 shrink-0" />
+          {state.error && (
+            <div className="flex items-center gap-3 rounded-[20px] border border-rose-500/20 bg-rose-500/10 p-4 text-sm font-bold text-rose-400 animate-in shake-1 duration-300">
+              <AlertCircle className="size-5 shrink-0" />
               <span>{state.error}</span>
             </div>
-          ) : null}
+          )}
 
-          {state.success ? (
-            <div className="mt-3 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-xs text-emerald-700 sm:text-sm">
-              <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
+          {state.success && (
+            <div className="flex items-center gap-3 rounded-[20px] border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm font-bold text-emerald-400 animate-in zoom-in-95 duration-300">
+              <CheckCircle2 className="size-5 shrink-0" />
               <span>{state.success}</span>
             </div>
-          ) : null}
+          )}
 
-          <div className="mt-3 rounded-[18px] border border-slate-200/70 bg-slate-50/70 p-3">
-            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs leading-5 text-slate-500">
-                استخدم الأزرار التالية للتنقل بين الخطوات.
-              </p>
+          {/* Actions */}
+          <div className="mt-10 space-y-4 rounded-[32px] border border-white/10 bg-white/[0.02] p-6 sm:p-8">
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-gradient-to-l from-violet-500/20 to-transparent" />
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#94A3B8] font-heading">إدارة التغييرات</h4>
+              <div className="h-px flex-1 bg-gradient-to-r from-violet-500/20 to-transparent" />
+            </div>
 
-              <div className="flex w-full gap-2 sm:w-auto">
-                {step > 1 ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={prevStep}
-                    className="h-10 flex-1 rounded-xl px-3 text-sm sm:flex-none"
-                  >
-                    <ChevronRight className="size-4" />
-                    السابق
-                  </Button>
-                ) : (
-                  <div className="flex-1 sm:hidden" />
-                )}
-
-                {step < 2 ? (
-                  <Button
-                    type="button"
-                    onClick={nextStep}
-                    disabled={!nameValue.trim() || !unitValue.trim()}
-                    className="h-10 flex-1 rounded-xl bg-slate-900 px-3 text-sm text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
-                  >
-                    التالي
-                    <ChevronLeft className="size-4" />
-                  </Button>
-                ) : (
-                  <div className="flex-1 sm:flex-none">
-                    <SubmitButton />
-                  </div>
-                )}
-              </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <SubmitButton />
+              
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                   if (onSuccess) onSuccess();
+                }}
+                className="h-14 w-full rounded-[20px] border border-white/10 bg-white/5 px-8 text-base font-black text-[#CBD5E1] transition-all hover:bg-white/10 hover:text-white active:scale-95"
+              >
+                إلغاء
+              </Button>
             </div>
           </div>
         </div>
@@ -375,19 +344,21 @@ export function ItemForm({
   }
 
   return (
-    <Card className="overflow-hidden rounded-[28px] border border-slate-200/70 bg-white/90 shadow-sm">
-      <CardHeader className="border-b border-slate-100 bg-gradient-to-l from-violet-50/70 via-white to-white pb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-100 text-violet-600">
-            <PackagePlus className="size-5" />
+    <Card className="group relative mx-auto w-full max-w-3xl overflow-hidden rounded-[32px] sm:rounded-[40px] border border-white/10 bg-[#0F1B33]/60 backdrop-blur-3xl shadow-[0_30px_90px_rgba(0,0,0,0.5)] transition-all duration-500">
+      <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent transition-opacity opacity-0 group-hover:opacity-100" />
+      
+      <CardHeader className="border-b border-white/5 bg-white/[0.02] px-5 py-6 sm:px-8 sm:py-8">
+        <div className="flex items-center gap-4 sm:gap-6">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[22px] bg-gradient-to-br from-violet-600/20 to-indigo-600/10 shadow-lg ring-1 ring-violet-400/20">
+            <PackagePlus className="size-7 text-violet-400" />
           </div>
 
-          <div>
-            <CardTitle className="text-lg font-extrabold text-slate-900">
-              {item?.id ? "تعديل المادة" : "إضافة مادة"}
+          <div className="min-w-0">
+            <CardTitle className="text-xl font-black text-[#F8FAFC] font-heading sm:text-2xl">
+              {item?.id ? "تعديل المادة" : "إضافة مادة جديدة"}
             </CardTitle>
-            <p className="mt-1 text-sm text-slate-500">
-              أدخل بيانات المادة كما ستُستخدم في النظام.
+            <p className="mt-1 text-xs font-medium text-[#94A3B8] sm:text-sm">
+              قم بتحديث أو إضافة بيانات المادة لضمان دقة عمليات التوزيع.
             </p>
           </div>
         </div>

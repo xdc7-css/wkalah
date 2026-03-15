@@ -45,7 +45,7 @@ export const getDashboardStats = cache(async () => {
   const supabase = await createClient();
   const { month, year } = getCurrentMonthYear();
 
-  const [familiesRes, membersRes, deliveredRes, distributionsRes] =
+  const [familiesRes, membersRes, deliveredRes, distributionsRes, itemsRes] =
     await Promise.all([
       supabase
         .from("families")
@@ -73,12 +73,17 @@ export const getDashboardStats = cache(async () => {
         `)
         .eq("month", month)
         .eq("year", year),
+
+      supabase
+        .from("items")
+        .select("id, is_active"),
     ]);
 
   if (familiesRes.error) throw familiesRes.error;
   if (membersRes.error) throw membersRes.error;
   if (deliveredRes.error) throw deliveredRes.error;
   if (distributionsRes.error) throw distributionsRes.error;
+  if (itemsRes.error) throw itemsRes.error;
 
   const totalFamilies = familiesRes.count ?? 0;
 
@@ -89,6 +94,9 @@ export const getDashboardStats = cache(async () => {
 
   const deliveredFamilies = deliveredRes.count ?? 0;
   const pendingFamilies = Math.max(totalFamilies - deliveredFamilies, 0);
+
+  const totalItemsCount = itemsRes.data?.length ?? 0;
+  const activeItemsCount = itemsRes.data?.filter(i => i.is_active).length ?? 0;
 
   const totalsMap = new Map<string, number>();
 
@@ -119,6 +127,8 @@ export const getDashboardStats = cache(async () => {
     totalMembers,
     deliveredFamilies,
     pendingFamilies,
+    totalItemsCount,
+    activeItemsCount,
     totalsByItem,
     month,
     year,
@@ -201,6 +211,18 @@ export async function getFamilyById(id: string) {
   return data;
 }
 
+export async function getFamilyByCode(code: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("families")
+    .select("*")
+    .eq("family_code", code)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
 export async function getFamilyHistory(id: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -260,4 +282,30 @@ export async function getMonthlyReport(month: number, year: number) {
 
   if (error) throw error;
   return data ?? [];
+}
+
+export async function getRecentDistributions(limit = 10) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("monthly_distributions")
+    .select(`
+      id,
+      month,
+      year,
+      delivered_at,
+      families (family_name),
+      monthly_distribution_items (id)
+    `)
+    .not("delivered_at", "is", null)
+    .order("delivered_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+
+  return (data ?? []).map((d: any) => ({
+    id: d.id,
+    family_name: d.families?.family_name || "عائلة غير معروفة",
+    item_count: d.monthly_distribution_items?.length || 0,
+    delivered_at: d.delivered_at,
+  }));
 }

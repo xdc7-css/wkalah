@@ -29,106 +29,68 @@ export default async function FamilyProfilePage({
         </Link>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
-        <FamilyForm family={family} />
+      <div className="grid gap-6 xl:grid-cols-[1fr_minmax(480px,520px)] lg:grid-cols-[1fr_450px]">
+        <Card className="hidden lg:block border-white/10 bg-white/[0.04] shadow-sm overflow-hidden rounded-[32px]">
+           <CardHeader className="border-b border-white/5 bg-white/5 pb-5">
+              <CardTitle className="text-xl font-bold text-white">معاينة البيانات</CardTitle>
+              <CardDescription>عرض سريع لبيانات العائلة الحالية</CardDescription>
+           </CardHeader>
+           <CardContent className="p-6">
+              {/* Content moved from the other card or simplified for preview */}
+              <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                      <div className="h-16 w-16 rounded-2xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20 text-violet-400">
+                         <Users className="size-8" />
+                      </div>
+                      <div>
+                         <h3 className="text-xl font-bold text-white">{family.family_name}</h3>
+                         <p className="text-sm text-slate-400">{family.family_code}</p>
+                      </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                      <div className="rounded-2xl border border-white/5 bg-white/5 p-4">
+                         <p className="text-xs text-slate-500 font-bold uppercase mb-1">الأفراد</p>
+                         <p className="text-2xl font-black text-white">{family.members_count}</p>
+                      </div>
+                      <div className="rounded-2xl border border-white/5 bg-white/5 p-4">
+                         <p className="text-xs text-slate-500 font-bold uppercase mb-1">المنطقة</p>
+                         <p className="text-base font-bold text-white truncate">{family.area ?? "-"}</p>
+                      </div>
+                  </div>
 
-        <Card className="border-slate-200 bg-white/80 shadow-sm">
-          <CardHeader className="border-b border-slate-100 pb-5">
-            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-              <div className="space-y-2">
-                <div className="flex flex-wrap items-center gap-3">
-                  <CardTitle className="text-2xl font-bold text-slate-900">
-                    {family.family_name}
-                  </CardTitle>
-
-                  <Badge
-                    className={
-                      family.is_active
-                        ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
-                        : "bg-amber-100 text-amber-700 hover:bg-amber-100"
-                    }
-                  >
-                    {family.is_active ? "فعالة" : "مجمّدة"}
-                  </Badge>
-                </div>
-
-                <CardDescription className="text-sm leading-6">
-                  <span className="font-medium text-slate-700">{family.family_code}</span>
-                  <span className="mx-2 text-slate-300">•</span>
-                  <span>{family.area ?? "بدون منطقة"}</span>
-                </CardDescription>
+                  <div className="rounded-2xl border border-white/5 bg-white/5 p-5">
+                      <p className="text-xs text-slate-500 font-bold uppercase mb-2">الملاحظات</p>
+                      <p className="text-sm text-slate-300 leading-relaxed">{family.notes || "لا توجد ملاحظات مسجلة."}</p>
+                  </div>
               </div>
-
-              <Link
-                href={`/api/export/family/${id}`}
-                className={buttonVariants({
-                  variant: "outline",
-                  className:
-                    "inline-flex h-11 items-center gap-2 rounded-2xl border-slate-200 bg-white px-4 text-sm font-semibold shadow-sm",
-                })}
-              >
-                <Download className="h-4 w-4" />
-                تصدير تقرير العائلة
-              </Link>
-            </div>
-          </CardHeader>
-
-          <CardContent className="space-y-5 pt-6">
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="mb-3 flex items-center gap-2 text-slate-500">
-                  <Users className="h-4 w-4" />
-                  <p className="text-xs font-medium">الأفراد</p>
-                </div>
-                <p className="text-3xl font-bold tracking-tight text-slate-900">
-                  {family.members_count}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="mb-3 flex items-center gap-2 text-slate-500">
-                  <Phone className="h-4 w-4" />
-                  <p className="text-xs font-medium">الهاتف</p>
-                </div>
-                <p className="text-xl font-semibold text-slate-900">
-                  {family.phone ?? "-"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="mb-3 flex items-center gap-2 text-slate-500">
-                  <Package2 className="h-4 w-4" />
-                  <p className="text-xs font-medium">عدد مرات التسليم</p>
-                </div>
-                <p className="text-3xl font-bold tracking-tight text-slate-900">
-                  {history.length}
-                </p>
-              </div>
-            </div>
-
-            {family.notes ? (
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <p className="text-xs font-medium text-slate-500">ملاحظات</p>
-                <p className="mt-3 leading-8 text-slate-800">{family.notes}</p>
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-5">
-                <p className="text-sm text-slate-500">لا توجد ملاحظات لهذه العائلة.</p>
-              </div>
-            )}
-          </CardContent>
+           </CardContent>
         </Card>
+
+        <FamilyForm family={family} />
       </div>
 
-      <Card className="border-slate-200 bg-white/80 shadow-sm">
-        <CardHeader className="border-b border-slate-100 pb-5">
-          <CardTitle className="text-2xl font-bold">سجل التسليم الشهري</CardTitle>
-          <CardDescription>
-            جميع السجلات محفوظة كسجل تاريخي ثابت ويمكن الرجوع إليها لاحقاً
-          </CardDescription>
+      <Card className="overflow-hidden rounded-[32px] border border-white/10 bg-[#0F1B33]/60 shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-3xl">
+        <CardHeader className="border-b border-white/5 bg-white/5 pb-6 pt-8 px-6 sm:px-10">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1">
+              <CardTitle className="text-2xl font-black text-white font-heading">سجل التسليم الشهري</CardTitle>
+              <CardDescription className="text-sm text-slate-400">
+                جميع السجلات محفوظة كسجل تاريخي ثابت ويمكن الرجوع إليها لاحقاً
+              </CardDescription>
+            </div>
+            
+            <Link
+              href={`/api/export/family/${id}`}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 text-sm font-bold text-white transition-all hover:bg-white/10 active:scale-95"
+            >
+              <Download className="size-4" />
+              تصدير التقرير
+            </Link>
+          </div>
         </CardHeader>
 
-        <CardContent className="space-y-4 pt-6">
+        <CardContent className="space-y-4 p-6 sm:p-10">
           {history.length === 0 ? (
             <EmptyState
               title="لا يوجد سجل تسليم"
@@ -138,47 +100,47 @@ export default async function FamilyProfilePage({
             history.map((record: any) => (
               <div
                 key={record.id}
-                className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"
+                className="overflow-hidden rounded-3xl border border-white/5 bg-white/[0.03] p-5 shadow-sm transition-all hover:bg-white/[0.05]"
               >
-                <div className="mb-5 flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-4">
+                <div className="mb-5 flex flex-wrap items-start justify-between gap-3 border-b border-white/5 pb-4">
                   <div className="space-y-1">
-                    <p className="text-lg font-bold text-slate-900">
+                    <p className="text-lg font-black text-white font-heading">
                       {monthOptions[record.month - 1]} {record.year}
                     </p>
-                    <p className="text-sm text-slate-500">
-                      عدد الأفراد وقت التسليم: {record.members_count_at_delivery}
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                      عدد الأفراد وقت التسليم: <span className="text-slate-300">{record.members_count_at_delivery}</span>
                     </p>
                   </div>
 
-                  <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100">
+                  <Badge className="rounded-xl border-none bg-violet-500/20 text-violet-400 px-3 py-1 font-black text-[10px]">
                     {record.monthly_distribution_items.length} مواد
                   </Badge>
                 </div>
 
-                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
                   {record.monthly_distribution_items.map((item: any) => (
                     <div
                       key={item.id}
-                      className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 transition hover:bg-white"
+                      className="rounded-2xl border border-white/5 bg-white/[0.04] p-4 transition hover:bg-white/10"
                     >
-                      <p className="mb-3 text-base font-semibold text-slate-900">
+                      <p className="mb-3 text-[15px] font-black text-white font-heading truncate">
                         {item.item_name_snapshot}
                       </p>
 
-                      <div className="space-y-1.5">
-                        <p className="text-sm text-slate-600">
-                          المسلّم:{" "}
-                          <span className="font-semibold text-slate-900">
-                            {formatNumber(item.delivered_quantity)} {item.unit_snapshot}
-                          </span>
-                        </p>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-[11px] font-bold">
+                           <span className="text-slate-500">المسلّم:</span>
+                           <span className="text-emerald-400">
+                             {formatNumber(item.delivered_quantity)} {item.unit_snapshot}
+                           </span>
+                        </div>
 
-                        <p className="text-sm text-slate-600">
-                          المحسوب:{" "}
-                          <span className="font-semibold text-slate-900">
-                            {formatNumber(item.calculated_quantity)} {item.unit_snapshot}
-                          </span>
-                        </p>
+                        <div className="flex items-center justify-between text-[11px] font-bold">
+                           <span className="text-slate-500">المحسوب:</span>
+                           <span className="text-slate-300">
+                             {formatNumber(item.calculated_quantity)} {item.unit_snapshot}
+                           </span>
+                        </div>
                       </div>
                     </div>
                   ))}

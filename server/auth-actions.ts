@@ -13,6 +13,10 @@ export async function loginAction(formData: FormData) {
     redirect("/login?error=invalid_credentials");
   }
 
+  // Enforce single session per user policy
+  // Automatically invalidate any previous sessions this user has on other devices/browsers.
+  await supabase.auth.signOut({ scope: "others" });
+
   redirect("/dashboard");
 }
 

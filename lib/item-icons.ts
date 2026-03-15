@@ -1,8 +1,10 @@
-export const itemIconsMap: Record<string, string> = {
+export const ITEM_ICONS_MAP: Record<string, string> = {
   "تمن": "/icons/items/rice.png",
+  "رز": "/icons/items/rice.png",
   "حمص": "/icons/items/vegetarian.png",
   "زيت": "/icons/items/olive-oil.png",
   "شكر": "/icons/items/sugar.png",
+  "سكر": "/icons/items/sugar.png",
   "طحين": "/icons/items/wheat.png",
   "عدس": "/icons/items/lentils.png",
   "فاصوليا": "/icons/items/bean.png",
@@ -10,7 +12,22 @@ export const itemIconsMap: Record<string, string> = {
   "معجون كبير": "/icons/items/tomato-big.png",
 };
 
-export function getItemIcon(name: string) {
-  const normalized = name.trim().replace(/\s+/g, " ");
-  return itemIconsMap[normalized] || "/icons/items/default.png";
+function normalizeArabic(text: string) {
+  return text
+    .trim()
+    .replace(/[أإآ]/g, "ا")
+    .replace(/ة/g, "ه")
+    .replace(/ى/g, "ي")
+    .replace(/\s+/g, " ");
+}
+
+export function getItemIcon(name: string): string {
+  if (!name) return "/icons/items/default.png";
+  
+  const normalized = normalizeArabic(name);
+
+  if (ITEM_ICONS_MAP[normalized]) return ITEM_ICONS_MAP[normalized];
+
+  const key = Object.keys(ITEM_ICONS_MAP).find((k) => normalized.includes(k));
+  return key ? ITEM_ICONS_MAP[key] : "/icons/items/default.png";
 }

@@ -1,35 +1,29 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import {
-  ChevronDown,
-  Edit3,
-  Search,
-  Snowflake,
-  Trash2,
-} from "lucide-react";
-import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { Search } from "lucide-react";
+import { Table, TBody, TH, THead, TR } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ItemForm } from "@/components/item-form";
 import { deleteItemAction, toggleItemActiveAction } from "@/server/item-actions";
-import { getItemIcon } from "@/lib/item-icons";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { AppToast } from "@/components/ui/app-toast";
+import { useRouter } from "next/navigation";
+import { ItemsTableRow } from "@/components/items/items-table-row";
 
 type ItemRow = {
   id: string;
   name: string;
   unit: string;
   default_quantity: number;
-  default_quantity_formatted?: string;
   calculation_type: "per_person" | "per_family";
   is_active: boolean;
 };
 
 export function ItemsClientTable({ items }: { items: ItemRow[] }) {
-  const [query, setQuery] = useState("");
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [editingItem, setEditingItem] = useState<ItemRow | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [openActionsId, setOpenActionsId] = useState<string | null>(null);
@@ -56,17 +50,22 @@ export function ItemsClientTable({ items }: { items: ItemRow[] }) {
   });
 
   useEffect(() => {
-    if (!toast.open) return;
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
+  useEffect(() => {
+    if (!toast.open) return;
     const timer = setTimeout(() => {
       setToast((prev) => ({ ...prev, open: false }));
     }, 2500);
-
     return () => clearTimeout(timer);
   }, [toast.open]);
 
   const filteredItems = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = debouncedQuery.trim().toLowerCase();
     if (!q) return items;
 
     return items.filter((item) => {
@@ -76,23 +75,19 @@ export function ItemsClientTable({ items }: { items: ItemRow[] }) {
         (item.calculation_type === "per_person" ? "لكل فرد" : "لكل عائلة").includes(q)
       );
     });
-  }, [items, query]);
+  }, [items, debouncedQuery]);
 
   async function handleDelete(item: ItemRow) {
     setLoadingId(item.id);
     try {
       await deleteItemAction(item.id);
-
       setToast({
         open: true,
         title: "تم حذف المادة بنجاح",
         description: `تم حذف "${item.name}" من السجل.`,
         type: "success",
       });
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 700);
+      router.refresh();
     } catch {
       setToast({
         open: true,
@@ -109,19 +104,13 @@ export function ItemsClientTable({ items }: { items: ItemRow[] }) {
     setLoadingId(item.id);
     try {
       await toggleItemActiveAction(item.id, !item.is_active);
-
       setToast({
         open: true,
-        title: item.is_active
-          ? "تم تجميد المادة بنجاح"
-          : "تمت إعادة تفعيل المادة بنجاح",
+        title: item.is_active ? "تم تجميد المادة بنجاح" : "تمت إعادة تفعيل المادة بنجاح",
         description: `تم تحديث حالة المادة "${item.name}".`,
         type: "success",
       });
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 700);
+      router.refresh();
     } catch {
       setToast({
         open: true,
@@ -134,350 +123,136 @@ export function ItemsClientTable({ items }: { items: ItemRow[] }) {
     }
   }
 
-  const closeActions = () => setOpenActionsId(null);
-
   return (
     <>
       <div className="space-y-4">
         <div className="flex flex-col gap-4">
-          <div className="relative w-full max-w-md">
-            <Search className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="group relative w-full max-w-xl">
+            <Search className="pointer-events-none absolute right-4 top-1/2 size-5 -translate-y-1/2 text-[#94A3B8] transition-colors group-focus-within:text-violet-400" />
             <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="ابحث باسم المادة أو الوحدة..."
-              className="h-11 w-full rounded-2xl border border-slate-200 bg-white pr-10 pl-4 text-sm outline-none transition focus:border-violet-400"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="ابحث باسم المادة أو الوحدة أو الآلية..."
+              className="h-14 w-full rounded-[24px] border border-white/10 bg-[#13213D] pr-12 pl-5 text-base font-medium text-white outline-none transition-all focus:border-violet-500/50 focus:bg-[#182742] focus:ring-4 focus:ring-violet-500/10 placeholder:text-[#526077]"
             />
           </div>
 
-          {editingItem ? (
-            <div className="w-full rounded-3xl border border-violet-200 bg-violet-50/70 p-4">
+          {editingItem && (
+            <div className="w-full rounded-[30px] border border-violet-500/30 bg-violet-500/10 p-4 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className="font-semibold text-slate-900">
-                  تعديل المادة: {editingItem.name}
-                </p>
+                <p className="font-bold text-white">تعديل المادة: {editingItem.name}</p>
                 <Button
                   variant="ghost"
                   onClick={() => setEditingItem(null)}
-                  className="w-full rounded-2xl sm:w-auto"
+                  className="rounded-xl h-8 text-xs font-bold"
                 >
-                  إلغاء
+                  إلغاء التعديل
                 </Button>
               </div>
               <ItemForm item={editingItem} />
             </div>
-          ) : null}
+          )}
         </div>
 
         {filteredItems.length === 0 ? (
-          <div className="flex min-h-[260px] items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-white/50 p-8 text-center">
-            <div>
-              <p className="text-base font-semibold text-slate-900">
-                لا توجد نتائج مطابقة
-              </p>
-              <p className="mt-2 text-sm text-slate-500">
-                جرّب البحث باسم مختلف أو أفرغ حقل البحث.
-              </p>
+          <div className="flex min-h-[300px] flex-col items-center justify-center rounded-[32px] border border-dashed border-white/10 bg-white/5 p-8 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5 text-slate-500">
+              <Search className="h-8 w-8" />
             </div>
+            <h3 className="mt-4 text-lg font-bold text-white">لا توجد نتائج مطابقة</h3>
+            <p className="mt-1 text-sm text-slate-500 max-w-xs mx-auto">
+              لم نجد أي مادة تطابق بحثك. جرّب كلمات مفتاحية أخرى أو أفرغ حقل البحث.
+            </p>
           </div>
         ) : (
-          <>
+          <div className="overflow-hidden rounded-[32px] border border-white/10 bg-[#0F1B33] shadow-2xl">
             {/* Desktop Table */}
-            <div className="hidden overflow-hidden rounded-3xl border border-slate-200/80 bg-white/60 md:block">
-              <div className="overflow-x-auto">
-                <div className="min-w-[980px]">
-                  <Table>
-                    <THead>
-                      <TR className="bg-slate-50/80">
-                        <TH>المادة</TH>
-                        <TH>الوحدة</TH>
-                        <TH>الكمية الافتراضية</TH>
-                        <TH>آلية الاحتساب</TH>
-                        <TH>الحالة</TH>
-                        <TH className="text-left">الإجراءات</TH>
-                      </TR>
-                    </THead>
-
-                    <TBody>
-                      {filteredItems.map((item) => {
-                        const busy = loadingId === item.id;
-
-                        return (
-                          <TR key={item.id} className="transition hover:bg-slate-50/70">
-                            <TD>
-                              <div className="flex items-center justify-end gap-3">
-                                <div className="text-right">
-                                  <p className="font-semibold text-slate-900">
-                                    {item.name}
-                                  </p>
-                                </div>
-
-                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-violet-100 bg-gradient-to-br from-white to-violet-50 shadow-sm">
-                                  <Image
-                                    src={getItemIcon(item.name)}
-                                    alt={item.name}
-                                    width={24}
-                                    height={24}
-                                    className="object-contain"
-                                  />
-                                </div>
-                              </div>
-                            </TD>
-
-                            <TD>{item.unit}</TD>
-                            <TD>
-                              {item.default_quantity_formatted ?? item.default_quantity}
-                            </TD>
-                            <TD>
-                              {item.calculation_type === "per_person"
-                                ? "لكل فرد"
-                                : "لكل عائلة"}
-                            </TD>
-
-                            <TD>
-                              <Badge
-                                className={
-                                  item.is_active
-                                    ? "border-0 bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
-                                    : "border-0 bg-amber-100 text-amber-700 hover:bg-amber-100"
-                                }
-                              >
-                                {item.is_active ? "فعالة" : "مجمّدة"}
-                              </Badge>
-                            </TD>
-
-                            <TD>
-                              <div className="flex flex-wrap items-center justify-end gap-2">
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  className="rounded-2xl border-slate-200 bg-white text-slate-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700"
-                                  onClick={() => setEditingItem(item)}
-                                >
-                                  <Edit3 className="size-4" />
-                                  تعديل
-                                </Button>
-
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  className="rounded-2xl border-slate-200 bg-white text-slate-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
-                                  disabled={busy}
-                                  onClick={() =>
-                                    setConfirmState({
-                                      open: true,
-                                      title: `${item.is_active ? "تجميد" : "إعادة تفعيل"} المادة "${item.name}"`,
-                                      description: item.is_active
-                                        ? "سيتم إخفاء هذه المادة من الاستخدام اليومي إلى حين إعادة تفعيلها."
-                                        : "سيتم إعادة تفعيل هذه المادة وظهورها ضمن الاستخدام اليومي.",
-                                      variant: "freeze",
-                                      onConfirm: async () => {
-                                        setConfirmState({ open: false, title: "" });
-                                        await handleToggle(item);
-                                      },
-                                    })
-                                  }
-                                >
-                                  <Snowflake className="size-4" />
-                                  {item.is_active ? "تجميد" : "تفعيل"}
-                                </Button>
-
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  className="rounded-2xl border-slate-200 bg-white text-slate-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-red-300 hover:bg-red-50 hover:text-red-700"
-                                  disabled={busy}
-                                  onClick={() =>
-                                    setConfirmState({
-                                      open: true,
-                                      title: `حذف المادة "${item.name}"`,
-                                      description:
-                                        "هذا الإجراء نهائي نسبيًا. تأكد من أنك تريد حذف المادة قبل المتابعة.",
-                                      variant: "delete",
-                                      onConfirm: async () => {
-                                        setConfirmState({ open: false, title: "" });
-                                        await handleDelete(item);
-                                      },
-                                    })
-                                  }
-                                >
-                                  <Trash2 className="size-4" />
-                                  حذف
-                                </Button>
-                              </div>
-                            </TD>
-                          </TR>
-                        );
+            <div className="hidden overflow-x-auto md:block">
+              <Table className="w-full">
+                <THead>
+                  <TR className="bg-white/5 border-0 font-heading">
+                    <TH className="px-6 py-5 font-bold text-[#F8FAFC]">المادة</TH>
+                    <TH className="px-6 py-5 font-bold text-[#F8FAFC]">آلية الاحتساب</TH>
+                    <TH className="px-6 py-5 font-bold text-[#F8FAFC]">الكمية الافتراضية</TH>
+                    <TH className="px-6 py-5 font-bold text-[#F8FAFC]">الحالة</TH>
+                    <TH className="px-6 py-5 font-bold text-[#F8FAFC] text-left">الإجراءات</TH>
+                  </TR>
+                </THead>
+                <TBody className="divide-y divide-white/5">
+                  {filteredItems.map((item) => (
+                    <ItemsTableRow
+                      key={item.id}
+                      item={item}
+                      view="table"
+                      isLoading={loadingId === item.id}
+                      onEdit={setEditingItem}
+                      onDelete={(it) => setConfirmState({
+                        open: true,
+                        title: `حذف المادة "${it.name}"`,
+                        description: "هذا الإجراء نهائي ولا يمكن التراجع عنه. هل أنت متأكد؟",
+                        variant: "delete",
+                        onConfirm: () => {
+                          setConfirmState({ open: false, title: "" });
+                          handleDelete(it);
+                        }
                       })}
-                    </TBody>
-                  </Table>
-                </div>
-              </div>
+                      onToggleActive={(it) => setConfirmState({
+                        open: true,
+                        title: `${it.is_active ? "تجميد" : "تفعيل"} المادة "${it.name}"`,
+                        description: it.is_active 
+                          ? "سيتم إيقاف ظهور هذه المادة في عمليات التوزيع اليومية." 
+                          : "ستظهر هذه المادة مرة أخرى في عمليات التوزيع اليومية.",
+                        variant: it.is_active ? "freeze" : "edit",
+                        onConfirm: () => {
+                          setConfirmState({ open: false, title: "" });
+                          handleToggle(it);
+                        }
+                      })}
+                      isActionsOpen={openActionsId === item.id}
+                      onOpenActions={setOpenActionsId}
+                    />
+                  ))}
+                </TBody>
+              </Table>
             </div>
 
-            {/* Mobile Cards */}
-            <div className="space-y-3 md:hidden">
-              {filteredItems.map((item) => {
-                const busy = loadingId === item.id;
-                const actionsOpen = openActionsId === item.id;
-
-                return (
-                  <div
-                    key={item.id}
-                    className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm"
-                  >
-                    <div className="mb-3 flex items-start justify-between gap-3">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setOpenActionsId((prev) => (prev === item.id ? null : item.id))
+            {/* Premium Responsive Grid (Cards) */}
+            <div className="grid gap-4 p-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredItems.map((item) => (
+                    <ItemsTableRow
+                      key={item.id}
+                      item={item}
+                      view="card"
+                      isLoading={loadingId === item.id}
+                      onEdit={setEditingItem}
+                      onDelete={(it) => setConfirmState({
+                        open: true,
+                        title: `حذف المادة "${it.name}"`,
+                        description: "هذا الإجراء نهائي ولا يمكن التراجع عنه. هل أنت متأكد؟",
+                        variant: "delete",
+                        onConfirm: () => {
+                          setConfirmState({ open: false, title: "" });
+                          handleDelete(it);
                         }
-                        className="inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700"
-                      >
-                        <ChevronDown
-                          className={`size-4 transition-transform duration-200 ${
-                            actionsOpen ? "rotate-180" : ""
-                          }`}
-                        />
-                        الخيارات
-                      </button>
-
-                      <div className="flex items-start gap-3">
-                        <div>
-                          <h3 className="text-base font-bold text-slate-900">
-                            {item.name}
-                          </h3>
-                          <p className="mt-1 text-sm text-slate-500">{item.unit}</p>
-                        </div>
-
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-violet-100 bg-gradient-to-br from-white to-violet-50 shadow-sm">
-                          <Image
-                            src={getItemIcon(item.name)}
-                            alt={item.name}
-                            width={24}
-                            height={24}
-                            className="object-contain"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-2xl bg-slate-50 p-3">
-                        <p className="text-xs text-slate-500">الكمية الافتراضية</p>
-                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                          {item.default_quantity_formatted ?? item.default_quantity}
-                        </p>
-                      </div>
-
-                      <div className="rounded-2xl bg-slate-50 p-3">
-                        <p className="text-xs text-slate-500">آلية الاحتساب</p>
-                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                          {item.calculation_type === "per_person"
-                            ? "لكل فرد"
-                            : "لكل عائلة"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-3">
-                      <Badge
-                        className={
-                          item.is_active
-                            ? "border-0 bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
-                            : "border-0 bg-amber-100 text-amber-700 hover:bg-amber-100"
+                      })}
+                      onToggleActive={(it) => setConfirmState({
+                        open: true,
+                        title: `${it.is_active ? "تجميد" : "تفعيل"} المادة "${it.name}"`,
+                        description: it.is_active 
+                          ? "سيتم إيقاف ظهور هذه المادة في عمليات التوزيع اليومية." 
+                          : "ستظهر هذه المادة مرة أخرى في عمليات التوزيع اليومية.",
+                        variant: it.is_active ? "freeze" : "edit",
+                        onConfirm: () => {
+                          setConfirmState({ open: false, title: "" });
+                          handleToggle(it);
                         }
-                      >
-                        {item.is_active ? "فعالة" : "مجمّدة"}
-                      </Badge>
-                    </div>
-
-                    <div
-                      className={`grid transition-all duration-300 ease-out ${
-                        actionsOpen
-                          ? "mt-4 grid-rows-[1fr] opacity-100"
-                          : "grid-rows-[0fr] opacity-0"
-                      }`}
-                    >
-                      <div className="overflow-hidden">
-                        <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-2">
-                          <div className="grid gap-2">
-                            <Button
-                              type="button"
-                              variant="outline"
-                              className="h-11 w-full justify-start rounded-2xl border-slate-200 bg-white text-slate-700 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700"
-                              onClick={() => {
-                                setEditingItem(item);
-                                closeActions();
-                              }}
-                            >
-                              <Edit3 className="size-4" />
-                              تعديل المادة
-                            </Button>
-
-                            <Button
-                              type="button"
-                              variant="outline"
-                              className="h-11 w-full justify-start rounded-2xl border-slate-200 bg-white text-slate-700 hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
-                              disabled={busy}
-                              onClick={() => {
-                                closeActions();
-                                setConfirmState({
-                                  open: true,
-                                  title: `${item.is_active ? "تجميد" : "إعادة تفعيل"} المادة "${item.name}"`,
-                                  description: item.is_active
-                                    ? "سيتم إيقاف هذه المادة مؤقتًا من الظهور ضمن الاستخدامات اليومية."
-                                    : "سيتم إعادة تفعيل هذه المادة وظهورها ضمن الاستخدامات اليومية.",
-                                  variant: "freeze",
-                                  onConfirm: async () => {
-                                    setConfirmState({ open: false, title: "" });
-                                    await handleToggle(item);
-                                  },
-                                });
-                              }}
-                            >
-                              <Snowflake className="size-4" />
-                              {item.is_active ? "تجميد المادة" : "إعادة تفعيل المادة"}
-                            </Button>
-
-                            <Button
-                              type="button"
-                              variant="outline"
-                              className="h-11 w-full justify-start rounded-2xl border-red-200 bg-red-50 text-red-700 hover:border-red-300 hover:bg-red-100"
-                              disabled={busy}
-                              onClick={() => {
-                                closeActions();
-                                setConfirmState({
-                                  open: true,
-                                  title: `حذف المادة "${item.name}"`,
-                                  description: "هذا الإجراء لا يمكن التراجع عنه بسهولة.",
-                                  variant: "delete",
-                                  onConfirm: async () => {
-                                    setConfirmState({ open: false, title: "" });
-                                    await handleDelete(item);
-                                  },
-                                });
-                              }}
-                            >
-                              <Trash2 className="size-4" />
-                              حذف المادة
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {busy ? (
-                      <p className="mt-3 text-xs text-slate-500">جارٍ تنفيذ العملية...</p>
-                    ) : null}
-                  </div>
-                );
-              })}
+                      })}
+                      isActionsOpen={openActionsId === item.id}
+                      onOpenActions={setOpenActionsId}
+                    />
+                  ))}
             </div>
-          </>
+          </div>
         )}
       </div>
 
@@ -488,15 +263,8 @@ export function ItemsClientTable({ items }: { items: ItemRow[] }) {
         variant={confirmState.variant}
         confirmText="تأكيد العملية"
         cancelText="إلغاء"
-        onClose={() =>
-          setConfirmState({
-            open: false,
-            title: "",
-          })
-        }
-        onConfirm={() => {
-          confirmState.onConfirm?.();
-        }}
+        onClose={() => setConfirmState({ open: false, title: "" })}
+        onConfirm={confirmState.onConfirm || (() => {})}
       />
 
       <AppToast
@@ -504,12 +272,7 @@ export function ItemsClientTable({ items }: { items: ItemRow[] }) {
         title={toast.title}
         description={toast.description}
         type={toast.type}
-        onClose={() =>
-          setToast((prev) => ({
-            ...prev,
-            open: false,
-          }))
-        }
+        onClose={() => setToast((prev) => ({ ...prev, open: false }))}
       />
     </>
   );

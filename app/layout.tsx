@@ -1,9 +1,24 @@
 import type { Metadata } from "next";
+import { Alexandria, Tajawal } from "next/font/google";
 import "./globals.css";
+
+const headFont = Alexandria({
+  subsets: ["arabic"],
+  variable: "--font-heading",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const bodyFont = Tajawal({
+  subsets: ["arabic"],
+  variable: "--font-body",
+  weight: ["400", "500", "700"],
+});
 
 export const metadata: Metadata = {
   title: "Ration Distribution Admin",
   description: "نظام إدارة توزيع المواد الغذائية",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+// ... (rest of metadata)
 
   openGraph: {
     title: "Ration Distribution Admin",
@@ -32,8 +47,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl">
-      <body>{children}</body>
+    <html lang="ar" dir="rtl" className={`${headFont.variable} ${bodyFont.variable}`}>
+      <body className="font-body">{children}</body>
     </html>
   );
 }

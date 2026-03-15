@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   Snowflake,
   PackagePlus,
+  Plus,
   X,
 } from "lucide-react";
 
@@ -28,38 +29,7 @@ type ItemRow = {
   is_active: boolean;
 };
 
-function StatCard({
-  title,
-  value,
-  icon,
-  valueClassName = "text-slate-900",
-}: {
-  title: string;
-  value: number | string;
-  icon: React.ReactNode;
-  valueClassName?: string;
-}) {
-  return (
-    <Card className="overflow-hidden rounded-[28px] border border-slate-200/70 bg-white/90 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-      <CardContent className="p-0">
-        <div className="flex items-center justify-between gap-4 p-5">
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-slate-500">{title}</p>
-            <p
-              className={`mt-2 text-3xl font-extrabold tracking-tight ${valueClassName}`}
-            >
-              {value}
-            </p>
-          </div>
-
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-violet-100 text-violet-600 shadow-inner">
-            {icon}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+import { StatsCard } from "@/components/ui/stats-card";
 
 export function ItemsPageClient({
   items,
@@ -99,14 +69,14 @@ export function ItemsPageClient({
   return (
     <>
       <div className="space-y-4 sm:space-y-6">
-        <Card className="overflow-hidden rounded-[30px] border border-slate-200/70 bg-white/90 shadow-sm">
+        <Card className="overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.08] shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-xl">
           <CardContent className="p-4 sm:p-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
-                <h2 className="text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">
+                <h2 className="text-lg font-extrabold tracking-tight text-white sm:text-xl">
                   إدارة المواد
                 </h2>
-                <p className="mt-1 text-sm leading-6 text-slate-500">
+                <p className="mt-1 text-sm leading-6 text-slate-300 md:text-base">
                   إضافة المواد الجديدة ومتابعة المواد الحالية وتحديث بياناتها.
                 </p>
               </div>
@@ -114,28 +84,28 @@ export function ItemsPageClient({
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(true)}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(139,92,246,0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(139,92,246,0.28)] active:translate-y-0"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(139,92,246,0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(139,92,246,0.28)] active:translate-y-0 active:scale-95"
               >
-                <PackagePlus className="size-4" />
+                <Plus className="size-4" />
                 إضافة مادة
               </button>
             </div>
           </CardContent>
         </Card>
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          <StatCard
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <StatsCard
             title="إجمالي المواد"
             value={totalItemsCount}
             icon={<Package2 className="size-6" />}
           />
-          <StatCard
+          <StatsCard
             title="المواد الفعالة"
             value={activeItemsCount}
             valueClassName="text-emerald-600"
             icon={<CheckCircle2 className="size-6" />}
           />
-          <StatCard
+          <StatsCard
             title="المواد المجمدة"
             value={inactiveItemsCount}
             valueClassName="text-amber-600"
@@ -143,19 +113,19 @@ export function ItemsPageClient({
           />
         </div>
 
-        <Card className="min-w-0 overflow-hidden rounded-[32px] border border-slate-200/70 bg-white/90 shadow-sm">
-          <CardHeader className="border-b border-slate-100 bg-gradient-to-l from-violet-50/70 via-white to-white pb-5">
-            <CardTitle className="text-xl font-extrabold text-slate-900 sm:text-2xl">
+        <Card className="min-w-0 max-w-full overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.08] shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-xl">
+          <CardHeader className="border-b border-white/5 bg-white/5 pb-5">
+            <CardTitle className="text-xl font-extrabold text-white sm:text-2xl">
               المواد
             </CardTitle>
-            <CardDescription className="max-w-2xl text-sm leading-6 text-slate-500">
+            <CardDescription className="max-w-2xl text-sm leading-6 text-slate-300 md:text-base">
               إدارة المواد الأساسية مع الكميات الافتراضية وآلية الاحتساب
               المعتمدة في التوزيع الشهري.
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="p-3 sm:p-4 lg:p-5">
-            <div className="overflow-hidden rounded-[24px] border border-slate-200/70 bg-white">
+          <CardContent className="p-4 md:p-6 lg:p-8">
+            <div className="overflow-hidden rounded-[24px] border border-white/10 bg-white/5 shadow-sm">
               <div className="overflow-x-auto">
                 <ItemsClientTable items={items} />
               </div>
@@ -182,21 +152,21 @@ export function ItemsPageClient({
             : "translate-y-full xl:translate-y-0 xl:translate-x-full"
         }`}
       >
-        <div className="flex h-[100svh] max-h-[100svh] flex-col overflow-hidden bg-white shadow-[0_30px_90px_rgba(15,23,42,0.34)] xl:ml-auto xl:h-screen xl:max-h-screen xl:rounded-l-[32px]">
-          <div className="shrink-0 border-b border-slate-100 bg-gradient-to-b from-violet-50/80 via-white to-white px-4 py-3 sm:px-5 xl:px-6">
-            <div className="mx-auto mb-3 h-1.5 w-14 rounded-full bg-slate-300 xl:hidden" />
+        <div className="flex h-[100svh] max-h-[100svh] flex-col overflow-hidden bg-[#0a0c10] shadow-[0_30px_90px_rgba(0,0,0,0.5)] xl:ml-auto xl:h-screen xl:max-h-screen xl:rounded-l-[32px] border-r border-white/5">
+          <div className="shrink-0 border-b border-white/5 bg-white/5 px-4 py-3 sm:px-5 xl:px-6">
+            <div className="mx-auto mb-3 h-1.5 w-14 rounded-full bg-white/10 xl:hidden" />
 
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-start gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-100 to-fuchsia-100 text-violet-700 sm:h-12 sm:w-12">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-violet-500/20 text-violet-400 ring-1 ring-violet-500/30 sm:h-12 sm:w-12">
                   <PackagePlus className="size-5" />
                 </div>
 
                 <div className="min-w-0">
-                  <h3 className="text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">
+                  <h3 className="text-lg font-extrabold tracking-tight text-white sm:text-xl">
                     إضافة مادة جديدة
                   </h3>
-                  <p className="mt-1 text-sm leading-6 text-slate-500">
+                  <p className="mt-1 text-sm leading-6 text-slate-400">
                     أدخل بيانات المادة المطلوبة ثم احفظ التغييرات.
                   </p>
                 </div>
@@ -205,7 +175,7 @@ export function ItemsPageClient({
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(false)}
-                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 transition-all hover:bg-slate-50 hover:text-slate-900"
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-400 transition-all hover:bg-white/10 hover:text-white"
               >
                 <X className="size-4" />
               </button>
@@ -213,7 +183,7 @@ export function ItemsPageClient({
           </div>
 
          <div
-  className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain bg-slate-50/60 p-3 sm:p-4 xl:p-6"
+  className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[#081225]/80 p-3 sm:p-4 xl:p-6 backdrop-blur-3xl"
   style={{ WebkitOverflowScrolling: "touch" }}
 >
   <div className="mx-auto w-full max-w-4xl pb-6">
