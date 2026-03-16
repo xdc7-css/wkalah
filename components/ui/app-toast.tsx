@@ -22,29 +22,29 @@ export function AppToast({
   const styles =
     type === "success"
       ? {
-          wrap: "border-emerald-200 bg-emerald-50",
-          icon: "text-emerald-600",
-          title: "text-emerald-800",
-          desc: "text-emerald-700",
+          wrap: "border-emerald-500/20 bg-emerald-500/10",
+          icon: "text-emerald-500",
+          title: "text-foreground",
+          desc: "text-muted-foreground",
         }
       : type === "error"
       ? {
-          wrap: "border-red-200 bg-red-50",
-          icon: "text-red-600",
-          title: "text-red-800",
-          desc: "text-red-700",
+          wrap: "border-rose-500/20 bg-rose-500/10",
+          icon: "text-rose-500",
+          title: "text-foreground",
+          desc: "text-muted-foreground",
         }
       : {
-          wrap: "border-violet-200 bg-violet-50",
-          icon: "text-violet-600",
-          title: "text-violet-800",
-          desc: "text-violet-700",
+          wrap: "border-accent/20 bg-accent/10",
+          icon: "text-accent",
+          title: "text-foreground",
+          desc: "text-muted-foreground",
         };
 
   return (
     <div className="fixed left-4 top-4 z-[110] w-full max-w-sm">
       <div
-        className={`rounded-[24px] border px-4 py-4 shadow-[0_18px_40px_rgba(15,23,42,0.14)] backdrop-blur ${styles.wrap}`}
+        className={`rounded-[24px] border px-4 py-4 shadow-2xl backdrop-blur-xl ${styles.wrap}`}
       >
         <div className="flex items-start gap-3">
           <div className={`mt-0.5 ${styles.icon}`}>
@@ -69,7 +69,7 @@ export function AppToast({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl px-2 py-1 text-xs font-medium text-slate-500 transition hover:bg-white/70 hover:text-slate-800"
+            className="rounded-xl px-2 py-1 text-xs font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
           >
             إغلاق
           </button>

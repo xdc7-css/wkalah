@@ -7,7 +7,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <select
         ref={ref}
-        className={`flex h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-100 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+        className={`flex h-12 w-full rounded-[18px] border border-border bg-secondary/40 px-5 py-2 text-sm font-bold text-foreground outline-none transition-all focus:border-accent/40 focus:ring-4 focus:ring-accent/5 disabled:cursor-not-allowed disabled:opacity-50 appearance-none ${className}`}
         {...props}
       >
         {children}

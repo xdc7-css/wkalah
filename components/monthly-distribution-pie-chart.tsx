@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { ItemIcon } from "./item-icon";
 import { toArabicDigits } from "@/lib/utils";
 
 type DistributionItem = {
@@ -29,7 +29,38 @@ const COLORS = [
   "#84cc16",
 ];
 
-import { getItemIcon } from "@/lib/item-icons";
+function normalizeItemName(name: string) {
+  return String(name ?? "").trim().toLowerCase();
+}
+
+function isFlourItem(name: string) {
+  const n = normalizeItemName(name);
+  return n.includes("طحين") || n.includes("flour") || n.includes("wheat");
+}
+
+function PieItemIcon({
+  name,
+  size,
+  className,
+}: {
+  name: string;
+  size: number;
+  className?: string;
+}) {
+  if (isFlourItem(name)) {
+    return (
+      <Image
+        src="/icons/items/wheat.webp"
+        alt={name}
+        width={size}
+        height={size}
+        className={className ?? "object-contain"}
+      />
+    );
+  }
+
+  return <ItemIcon name={name} size={size} className={className} />;
+}
 
 export function MonthlyDistributionPieChart({ data }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -45,14 +76,15 @@ export function MonthlyDistributionPieChart({ data }: Props) {
         name: String(item.name ?? "").trim(),
         value: Number(item.value ?? 0),
       }))
-      .filter((item) => item.name && Number.isFinite(item.value) && item.value > 0);
+      .filter(
+        (item) => item.name && Number.isFinite(item.value) && item.value > 0
+      );
 
     const total = cleaned.reduce((sum, item) => sum + item.value, 0);
 
     return cleaned.map((item, index) => ({
       ...item,
       percentage: total > 0 ? (item.value / total) * 100 : 0,
-      iconSrc: getItemIcon(item.name),
       color: COLORS[index % COLORS.length],
     }));
   }, [data]);
@@ -68,15 +100,15 @@ export function MonthlyDistributionPieChart({ data }: Props) {
 
   if (!chartData.length) {
     return (
-    <div className="rounded-[32px] border border-white/10 bg-white/5 p-8 text-center text-sm text-slate-400 shadow-sm">
-      لا توجد بيانات توزيع صالحة لهذا الشهر بعد
-    </div>
+      <div className="rounded-[32px] border border-border bg-card p-8 text-center text-sm text-muted-foreground shadow-sm">
+        لا توجد بيانات توزيع صالحة لهذا الشهر بعد
+      </div>
     );
   }
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 p-2 md:p-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-    <div className="order-1 min-w-0 rounded-[32px] border border-white/10 bg-white/5 p-4 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.15)] md:p-8">
+      <div className="order-1 min-w-0 rounded-[32px] border border-white/10 bg-white/5 p-4 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.15)] md:p-8">
         <div className="relative h-[320px] w-full min-w-0 overflow-hidden md:h-[420px]">
           {mounted ? (
             <ResponsiveContainer width="99%" height="100%" minWidth={0}>
@@ -103,7 +135,11 @@ export function MonthlyDistributionPieChart({ data }: Props) {
                       <Cell
                         key={`cell-${index}`}
                         fill={entry.color}
-                        stroke={isActive ? "#ffffff" : "#f1f5f9"}
+                        stroke={
+                          isActive
+                            ? "hsl(var(--foreground))"
+                            : "hsl(var(--border))"
+                        }
                         strokeWidth={isActive ? 4 : 2}
                         style={{
                           filter: isActive
@@ -120,7 +156,7 @@ export function MonthlyDistributionPieChart({ data }: Props) {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-full w-full animate-pulse rounded-[28px] bg-slate-100" />
+            <div className="h-full w-full animate-pulse rounded-[28px] bg-secondary" />
           )}
 
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -133,18 +169,16 @@ export function MonthlyDistributionPieChart({ data }: Props) {
                 transition={{ duration: 0.22 }}
                 className="flex flex-col items-center"
               >
-                <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-slate-900/50 shadow-[0_8px_30px_rgba(0,0,0,0.5)] backdrop-blur-md md:h-28 md:w-28">
-                  <Image
-                    src={activeItem?.iconSrc || "/icons/items/default.png"}
-                    alt={activeItem?.name || "item"}
-                    width={55}
-                    height={55}
-                    className="h-[45px] w-[45px] object-contain md:h-[55px] md:w-[55px]"
+                <div className="flex h-20 w-20 items-center justify-center rounded-full border border-border bg-background shadow-2xl shadow-accent/5 backdrop-blur-md md:h-28 md:w-28">
+                  <PieItemIcon
+                    name={activeItem?.name || ""}
+                    size={55}
+                    className="h-[38px] w-[38px] object-contain md:h-[55px] md:w-[55px]"
                   />
                 </div>
 
                 <div className="mt-3 text-center">
-                  <h3 className="text-lg font-black leading-tight text-white md:text-xl">
+                  <h3 className="text-lg font-black leading-tight text-foreground md:text-xl">
                     {activeItem?.name}
                   </h3>
                   <p
@@ -171,28 +205,31 @@ export function MonthlyDistributionPieChart({ data }: Props) {
                 onMouseEnter={() => setActiveIndex(index)}
                 onClick={() => setActiveIndex(index)}
                 whileHover={{ y: -2 }}
-                className={`flex cursor-pointer items-center justify-between rounded-3xl border p-4 transition-all duration-300 ${
-                  isActive
-                    ? "border-violet-500/30 bg-violet-500/10 shadow-lg ring-1 ring-violet-500/20"
-                    : "border-white/5 bg-white/5"
-                }`}
+                className="flex cursor-pointer items-center justify-between rounded-3xl border p-4 transition-all duration-300"
+                style={{
+                  borderColor: isActive ? `${item.color}44` : "hsl(var(--border)/0.3)",
+                  backgroundColor: isActive
+                    ? `${item.color}15`
+                    : "hsl(var(--card)/0.4)",
+                  boxShadow: isActive
+                    ? `0 10px 30px -10px ${item.color}33, inset 0 0 0 1px ${item.color}22`
+                    : "none",
+                }}
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-50">
-                    <Image
-                      src={item.iconSrc}
-                      alt={item.name}
-                      width={28}
-                      height={28}
+                <div className="min-w-0 flex items-center gap-3">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border/10 bg-secondary/50 ring-1 ring-border/5">
+                    <PieItemIcon
+                      name={item.name}
+                      size={28}
                       className="h-7 w-7 object-contain"
                     />
                   </div>
 
                   <div className="min-w-0">
-                    <h4 className="truncate text-[15px] font-bold text-white">
+                    <h4 className="truncate text-[15px] font-bold text-foreground">
                       {item.name}
                     </h4>
-                    <p className="text-xs font-semibold text-slate-400">
+                    <p className="text-xs font-semibold text-muted-foreground">
                       {toArabicDigits(item.value.toLocaleString("en-US"))} وحدة
                     </p>
                   </div>
@@ -215,7 +252,7 @@ export function MonthlyDistributionPieChart({ data }: Props) {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           whileHover={{ y: -3, scale: 1.01 }}
-          className="relative mt-auto overflow-hidden rounded-[30px] border border-white/10 bg-white/5 p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] backdrop-blur-xl"
+          className="relative mt-auto overflow-hidden rounded-[30px] border border-border bg-card p-6 shadow-2xl backdrop-blur-xl"
         >
           <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-violet-400/10 blur-2xl" />
 
@@ -223,28 +260,28 @@ export function MonthlyDistributionPieChart({ data }: Props) {
             <div className="min-w-0 space-y-1">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-violet-500" />
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
                 </span>
 
-                <p className="text-[11px] font-bold uppercase tracking-wider text-violet-600/70">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-accent/70">
                   إجمالي المواد الموزعة
                 </p>
               </div>
 
               <div className="flex flex-wrap items-baseline gap-2">
-                <span className="text-4xl font-black tracking-tight text-white">
+                <span className="text-4xl font-black tracking-tight text-foreground">
                   {toArabicDigits(totalDistributed.toLocaleString("en-US"))}
                 </span>
-                <span className="text-sm font-bold text-slate-400">
+                <span className="text-sm font-bold text-muted-foreground">
                   وحدة إجمالية
                 </span>
               </div>
             </div>
 
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-violet-500/20 bg-violet-500/10 shadow-sm">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-accent/20 bg-accent/10 shadow-sm">
               <svg
-                className="h-7 w-7 text-violet-600"
+                className="h-7 w-7 text-accent"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -259,7 +296,7 @@ export function MonthlyDistributionPieChart({ data }: Props) {
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-0 h-[3px] w-full bg-gradient-to-r from-transparent via-violet-400/40 to-transparent" />
+          <div className="absolute bottom-0 left-0 h-[3px] w-full bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
         </motion.div>
       </div>
     </div>

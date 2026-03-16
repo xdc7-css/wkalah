@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-slate-950">
+    <main className="relative min-h-screen overflow-hidden bg-background">
       {/* Background layers */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),transparent_22%),radial-gradient(circle_at_top_left,rgba(59,130,246,0.14),transparent_28%),linear-gradient(to_bottom,rgba(15,23,42,1),rgba(15,23,42,0.96),rgba(2,6,23,1))]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.12),transparent_35%),radial-gradient(circle_at_top_left,rgba(217,70,239,0.08),transparent_40%)]" />
 
       <div className="absolute inset-0 opacity-[0.06]">
         <svg
@@ -41,11 +41,11 @@ export default function LoginPage() {
       <div className="absolute bottom-[-80px] left-[-60px] h-72 w-72 rounded-full bg-fuchsia-500/10 blur-3xl" />
 
       <div className="relative flex min-h-screen items-center justify-center p-4 sm:p-6">
-        <div className="w-full max-w-md overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.07] shadow-[0_18px_50px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-300/60 to-transparent" />
+        <div className="w-full max-w-md overflow-hidden rounded-[32px] border border-white/10 bg-card shadow-[0_25px_60px_rgba(0,0,0,0.5)] backdrop-blur-3xl">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-300/40 to-transparent" />
 
           <div className="p-3">
-            <div className="rounded-[28px] border border-white/10 bg-slate-900/40 p-3 sm:p-4">
+            <div className="rounded-[28px] border border-white/10 bg-secondary/30 p-4 sm:p-5">
               {/* Header box */}
               <div className="mb-4 overflow-hidden rounded-[26px] border border-violet-300/15 bg-gradient-to-l from-violet-500/20 via-fuchsia-500/10 to-indigo-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:mb-5">
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-300/50 to-transparent" />

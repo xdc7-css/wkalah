@@ -8,24 +8,26 @@ type TDProps = React.TdHTMLAttributes<HTMLTableCellElement>;
 
 export function Table({ className = "", ...props }: TableProps) {
   return (
-    <div className="w-full overflow-x-auto rounded-[24px] border border-white/10 bg-[#0a0c10]/40 backdrop-blur-md">
-      <table className={`w-full min-w-[760px] text-sm ${className}`} {...props} />
+    <div className="w-full overflow-hidden rounded-[32px] border border-border bg-card shadow-xl ring-1 ring-border/5">
+      <div className="overflow-x-auto">
+        <table className={`w-full min-w-[800px] text-sm ${className}`} {...props} />
+      </div>
     </div>
   );
 }
 
 export function THead({ className = "", ...props }: SectionProps) {
-  return <thead className={`bg-white/5 border-b border-white/10 ${className}`} {...props} />;
+  return <thead className={`bg-secondary/40 border-b border-border ${className}`} {...props} />;
 }
 
 export function TBody({ className = "", ...props }: SectionProps) {
-  return <tbody className={className} {...props} />;
+  return <tbody className={`divide-y divide-border ${className}`} {...props} />;
 }
 
 export function TR({ className = "", ...props }: RowProps) {
   return (
     <tr
-      className={`border-b border-white/5 last:border-b-0 transition-colors hover:bg-white/[0.03] ${className}`}
+      className={`transition-colors hover:bg-secondary/40 ${className}`}
       {...props}
     />
   );
@@ -34,7 +36,7 @@ export function TR({ className = "", ...props }: RowProps) {
 export function TH({ className = "", ...props }: CellProps) {
   return (
     <th
-      className={`px-5 py-4 text-right font-bold text-slate-400 uppercase tracking-wider text-[11px] ${className}`}
+      className={`px-6 py-5 text-right font-black uppercase tracking-[0.15em] text-muted-foreground text-[10px] sm:text-[11px] font-heading ${className}`}
       {...props}
     />
   );
@@ -43,7 +45,7 @@ export function TH({ className = "", ...props }: CellProps) {
 export function TD({ className = "", ...props }: TDProps) {
   return (
     <td
-      className={`px-5 py-5 align-middle text-slate-300 font-medium ${className}`}
+      className={`px-5 py-5 align-middle text-secondary-foreground font-medium ${className}`}
       {...props}
     />
   );

@@ -1,13 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Edit2, Trash2, MoreVertical, X, Check, Loader2, Snowflake, Zap } from "lucide-react";
+import Image from "next/image";
+import {
+  Edit2,
+  Trash2,
+  MoreVertical,
+  X,
+  Loader2,
+  Snowflake,
+  Zap,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ItemIcon } from "@/components/item-icon";
-import { formatNumber } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import { formatNumber, cn } from "@/lib/utils";
 
 export type ItemRow = {
   id: string;
@@ -29,6 +37,35 @@ interface ItemsTableRowProps {
   onOpenActions: (id: string | null) => void;
 }
 
+function normalizeItemName(name: string) {
+  return name.trim().toLowerCase();
+}
+
+function isFlourItem(name: string) {
+  const n = normalizeItemName(name);
+  return (
+    n.includes("طحين") ||
+    n.includes("flour") ||
+    n.includes("wheat")
+  );
+}
+
+function ItemVisual({ name, size = 32, className = "" }: { name: string; size?: number; className?: string }) {
+  if (isFlourItem(name)) {
+    return (
+      <Image
+        src="/icons/items/wheat.webp"
+        alt={name}
+        width={size}
+        height={size}
+        className={cn("object-contain", className)}
+      />
+    );
+  }
+
+  return <ItemIcon name={name} size={size} className={className} />;
+}
+
 export function ItemsTableRow({
   item,
   view = "table",
@@ -37,122 +74,135 @@ export function ItemsTableRow({
   onDelete,
   onToggleActive,
   isActionsOpen,
-  onOpenActions
+  onOpenActions,
 }: ItemsTableRowProps) {
   const isTable = view === "table";
 
-  // 1. Actions Logic - Shared between Table and Card
   const ActionButtons = ({ isMobile = false }) => {
     const btnClass = cn(
-      "flex items-center justify-center gap-2 rounded-xl border font-bold transition-all active:scale-95 h-[38px] backdrop-blur-xl",
+      "flex items-center justify-center gap-2 rounded-xl border font-bold transition-all active:scale-95 h-[42px] backdrop-blur-xl",
       isMobile ? "w-full text-[13px]" : "px-4 text-xs"
     );
+
+    const iconClass = "h-4.5 w-4.5 sm:h-5 sm:w-5";
 
     return (
       <div className={cn("grid gap-2.5", isMobile ? "grid-cols-2" : "grid-cols-3 w-full")}>
         <Button
-          onClick={(e) => { e.stopPropagation(); onEdit(item); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(item);
+          }}
           className={cn(
             btnClass,
-            "border-amber-400/20 bg-white/5 text-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.1)] hover:bg-amber-400/10 hover:border-amber-400/50 hover:shadow-[0_0_20px_rgba(251,191,36,0.2)]"
+            "border-amber-500/20 bg-amber-500/5 text-amber-500 hover:bg-amber-500/10 hover:border-amber-500/40"
           )}
         >
-          <Edit2 className="h-3.5 w-3.5" />
+          <Edit2 className={iconClass} />
           <span>تعديل</span>
         </Button>
-        
+
         <Button
-          onClick={(e) => { e.stopPropagation(); onToggleActive(item); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleActive(item);
+          }}
           className={cn(
             btnClass,
-            item.is_active 
-              ? "border-sky-400/20 bg-white/5 text-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.1)] hover:bg-sky-400/10 hover:border-sky-400/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)]" 
-              : "border-emerald-400/20 bg-white/5 text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.1)] hover:bg-emerald-400/10 hover:border-emerald-400/50 hover:shadow-[0_0_20px_rgba(52,211,153,0.2)]"
+            item.is_active
+              ? "border-sky-500/20 bg-sky-500/5 text-sky-500 hover:bg-sky-500/10 hover:border-sky-500/40"
+              : "border-emerald-500/20 bg-emerald-500/5 text-emerald-500 hover:bg-emerald-500/10 hover:border-emerald-500/40"
           )}
         >
-          {item.is_active ? <Snowflake className="h-3.5 w-3.5" /> : <Zap className="h-3.5 w-3.5" />}
+          {item.is_active ? (
+            <Snowflake className={iconClass} />
+          ) : (
+            <Zap className={iconClass} />
+          )}
           <span>{item.is_active ? "تجميد" : "تفعيل"}</span>
         </Button>
 
         <Button
-          onClick={(e) => { e.stopPropagation(); onDelete(item); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(item);
+          }}
           className={cn(
             btnClass,
-            "border-rose-500/20 bg-white/5 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:bg-rose-500/10 hover:border-rose-500/50 hover:shadow-[0_0_20px_rgba(244,63,94,0.2)]",
+            "border-red-500/20 bg-red-500/5 text-red-500 hover:bg-red-500/10 hover:border-red-500/40",
             isMobile && "col-span-2"
           )}
         >
-          <Trash2 className="h-3.5 w-3.5" />
+          <Trash2 className={iconClass} />
           <span>حذف</span>
         </Button>
       </div>
     );
   };
 
-  // 2. Card View Render
   if (!isTable) {
     return (
-      <Card className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-[#0F1B33]/35 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-2xl transition-all duration-500 hover:bg-[#0F1B33]/45 active:scale-[0.99]">
-        {/* Card Header & Stats */}
+      <Card className="group relative overflow-hidden p-6 shadow-2xl transition-all duration-500 hover:bg-white/[0.02] active:scale-[0.99]">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-5 min-w-0">
-            {/* Liquid Glass Icon Container */}
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_2px_10px_rgba(255,255,255,0.1)] border border-white/10 backdrop-blur-md transition-all group-hover:scale-110 group-hover:rotate-6">
-              <ItemIcon name={item.name} size={32} className="brightness-110 contrast-125 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" />
+          <div className="flex min-w-0 items-center gap-5">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[18px] bg-secondary border border-border shadow-lg transition-all group-hover:scale-110 group-hover:rotate-6">
+              <ItemVisual name={item.name} size={38} className="h-[38px] w-[38px]" />
             </div>
+
             <div className="min-w-0">
-              <h3 className="truncate text-xl font-black text-[#F8FAFC] font-heading tracking-tight">{item.name}</h3>
-              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#94A3B8] opacity-80 mt-0.5">{item.unit}</p>
+              <h3 className="truncate text-xl font-black text-foreground font-heading tracking-tight">
+                {item.name}
+              </h3>
+              <p className="mt-0.5 text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground opacity-80">
+                {item.unit}
+              </p>
             </div>
           </div>
 
           <div className="text-right">
-            <p className="text-3xl font-black text-[#F8FAFC] font-heading tracking-tighter leading-none">{formatNumber(item.default_quantity)}</p>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#64748B] mt-1.5">الكمية المقررة</p>
+            <p className="text-3xl font-black text-foreground font-heading tracking-tighter leading-none">
+              {formatNumber(item.default_quantity)}
+            </p>
+            <p className="mt-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+              الكمية المقررة
+            </p>
           </div>
         </div>
 
-        {/* Status Badges - Clean Floating Look */}
         <div className="mt-8 flex flex-wrap items-center gap-2.5">
-          <Badge variant="secondary" className={cn(
-            "rounded-xl border border-white/[0.03] px-3.5 py-1.5 text-[10px] font-black uppercase tracking-widest bg-white/[0.03] text-slate-300 shadow-sm",
-            item.calculation_type === "per_person" ? "text-indigo-300 ring-1 ring-indigo-500/20" : "text-blue-300 ring-1 ring-blue-500/20"
-          )}>
+          <Badge variant="secondary">
             {item.calculation_type === "per_person" ? "لكل فرد" : "لكل عائلة"}
           </Badge>
-          <Badge className={cn(
-            "rounded-xl border border-white/[0.03] px-3.5 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all shadow-sm",
-            item.is_active ? "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20" : "bg-white/5 text-slate-500 ring-1 ring-white/10"
-          )}>
+          <Badge variant={item.is_active ? "success" : "secondary"}>
             {item.is_active ? "فعالة" : "مجمدة"}
           </Badge>
         </div>
 
-        {/* Action Controls - Glass Panel Integration */}
         <div className="mt-8">
-          {/* Desktop Display - Balanced Row */}
           <div className="hidden lg:block">
-            <div className="p-1 rounded-[20px] bg-white/[0.02] border border-white/[0.05] backdrop-blur-sm">
+            <div className="rounded-[20px] border border-border bg-secondary/20 p-1 shadow-inner backdrop-blur-sm">
               <ActionButtons isMobile={false} />
             </div>
           </div>
 
-          {/* Table/Mobile Display - Compact Grid or Drawer */}
           <div className="lg:hidden">
             <Button
-              onClick={(e) => { e.stopPropagation(); onOpenActions(isActionsOpen ? null : item.id); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenActions(isActionsOpen ? null : item.id);
+              }}
               className={cn(
-                "w-full h-12 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all border shadow-lg",
-                isActionsOpen 
-                  ? "bg-violet-600/10 text-violet-300 border-violet-500/40 shadow-violet-500/10" 
-                  : "bg-white/[0.03] text-[#CBD5E1] border-white/10 hover:bg-white/10"
+                "h-12 w-full rounded-2xl border font-black text-xs uppercase tracking-[0.3em] transition-all shadow-lg",
+                isActionsOpen
+                  ? "border-accent/40 bg-accent/10 text-accent shadow-accent/10"
+                  : "border-border bg-secondary/40 text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
               )}
             >
               {isActionsOpen ? "إغلاق" : "خيارات التحكم"}
             </Button>
 
             {isActionsOpen && (
-              <div className="mt-4 overflow-hidden rounded-[26px] border border-white/10 bg-[#0F1B33]/60 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-3xl animate-in fade-in zoom-in slide-in-from-top-6 duration-500">
+              <div className="animate-in slide-in-from-top-6 fade-in zoom-in mt-4 overflow-hidden rounded-[26px] border border-border bg-card/80 p-5 shadow-2xl backdrop-blur-xl duration-500">
                 <ActionButtons isMobile={true} />
               </div>
             )}
@@ -162,93 +212,138 @@ export function ItemsTableRow({
     );
   }
 
-  // 3. Table Row Render
   return (
-    <tr className="group transition-all hover:bg-white/[0.04] border-b border-white/[0.02] last:border-0">
+    <tr className="group border-b border-border/10 transition-all last:border-0 hover:bg-secondary/40">
       <td className="px-6 py-6">
         <div className="flex items-center gap-5">
-          {/* Glass Icon for Table */}
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/[0.06] shadow-[inset_0_2px_10px_rgba(255,255,255,0.05)] border border-white/[0.08] backdrop-blur-sm transition-all group-hover:scale-110 group-hover:rotate-6">
-            <ItemIcon name={item.name} size={32} className="brightness-110 contrast-125 transition-transform group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" />
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[18px] border border-border/20 bg-secondary shadow-lg transition-all group-hover:scale-110 group-hover:rotate-6">
+            <ItemVisual
+              name={item.name}
+              size={38}
+              className="h-[38px] w-[38px] transition-transform"
+            />
           </div>
+
           <div className="min-w-0">
-            <p className="truncate text-[18px] font-black text-[#F8FAFC] font-heading tracking-tight">{item.name}</p>
-            <p className="mt-0.5 text-xs font-bold text-[#94A3B8] uppercase tracking-[0.2em] opacity-70">{item.unit}</p>
+            <p className="truncate text-[18px] font-black text-foreground font-heading tracking-tight">
+              {item.name}
+            </p>
+            <p className="mt-0.5 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-70">
+              {item.unit}
+            </p>
           </div>
         </div>
       </td>
 
-      <td className="px-6 py-6 whitespace-nowrap">
-        <Badge variant="secondary" className={cn(
-          "rounded-xl border border-white/[0.03] px-3.5 py-1.5 text-xs font-bold bg-white/[0.03] shadow-sm ring-1 ring-white/5",
-          item.calculation_type === "per_person" ? "text-indigo-300 ring-indigo-500/10" : "text-blue-300 ring-blue-500/10"
-        )}>
+      <td className="whitespace-nowrap px-6 py-6">
+        <Badge
+          variant="secondary"
+          className={cn(
+            "rounded-xl border border-border/20 bg-secondary/40 px-3.5 py-1.5 text-xs font-bold shadow-sm ring-1 ring-border/5",
+            item.calculation_type === "per_person"
+              ? "text-indigo-400 ring-indigo-500/10 dark:text-indigo-300"
+              : "text-blue-400 ring-blue-500/10 dark:text-blue-300"
+          )}
+        >
           {item.calculation_type === "per_person" ? "لكل فرد" : "لكل عائلة"}
         </Badge>
       </td>
 
       <td className="px-6 py-6">
-        <p className="text-3xl font-black tracking-tighter text-[#F8FAFC] font-heading">{formatNumber(item.default_quantity)}</p>
+        <p className="text-3xl font-black tracking-tighter text-foreground font-heading">
+          {formatNumber(item.default_quantity)}
+        </p>
       </td>
 
       <td className="px-6 py-6">
-        <Badge className={cn(
-          "h-9 rounded-xl px-5 text-xs font-black border border-white/10 transition-all shadow-lg font-heading whitespace-nowrap",
-          item.is_active ? "bg-emerald-500/90 text-slate-950 shadow-emerald-500/20" : "bg-white/10 text-slate-400"
-        )}>
+        <Badge variant={item.is_active ? "success" : "secondary"}>
           {item.is_active ? "فعالة" : "مجمدة"}
         </Badge>
       </td>
 
-      <td className="px-6 py-6 text-left relative">
+      <td className="relative px-6 py-6 text-left">
         <div className="flex items-center justify-end gap-3">
           <Button
             variant="ghost"
             size="icon"
-            onClick={(e) => { e.stopPropagation(); onOpenActions(isActionsOpen ? null : item.id); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenActions(isActionsOpen ? null : item.id);
+            }}
             className={cn(
-              "h-11 w-11 rounded-2xl transition-all border",
-              isActionsOpen 
-                ? "bg-violet-500/20 text-violet-300 border-violet-500/40 ring-1 ring-violet-500/20" 
-                : "text-slate-400 border-transparent hover:bg-white/10 hover:text-white"
+              "h-11 w-11 rounded-2xl border transition-all",
+              isActionsOpen
+                ? "border-accent/40 bg-accent/20 text-accent ring-1 ring-accent/20"
+                : "border-transparent text-muted-foreground hover:bg-secondary hover:text-foreground"
             )}
             disabled={isLoading}
           >
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreVertical className="h-5 w-5" />}
+            {isLoading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <MoreVertical className="h-5.5 w-5.5" />
+            )}
           </Button>
 
           {isActionsOpen && (
-            <div className="absolute left-20 z-[100] flex w-max items-center gap-2 rounded-[24px] border border-white/10 bg-[#0F1B33]/80 p-2 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-3xl animate-in fade-in zoom-in slide-in-from-right-6 duration-300">
+            <div className="animate-in slide-in-from-right-6 fade-in zoom-in absolute left-20 z-[100] flex w-max items-center gap-2 rounded-[24px] border border-border bg-card p-2 shadow-2xl backdrop-blur-xl duration-300">
               <Button
-                variant="ghost" size="sm" onClick={() => { onEdit(item); onOpenActions(null); }}
-                className="h-9 px-4 gap-2 rounded-xl text-xs font-bold text-slate-300 hover:bg-white/10 hover:border-white/10"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  onEdit(item);
+                  onOpenActions(null);
+                }}
+                className="h-11 gap-2 rounded-xl px-5 text-xs font-black text-muted-foreground hover:bg-secondary hover:text-foreground"
               >
-                <Edit2 className="h-3.5 w-3.5" /> تعديل
+                <Edit2 className="h-5 w-5" />
+                تعديل
               </Button>
+
               <Button
-                variant="ghost" size="sm" onClick={() => { onToggleActive(item); onOpenActions(null); }}
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  onToggleActive(item);
+                  onOpenActions(null);
+                }}
                 className={cn(
-                  "h-9 px-4 gap-2 rounded-xl text-xs font-bold transition-all", 
-                  item.is_active 
-                    ? "text-amber-400 hover:bg-amber-400/10 hover:shadow-[0_0_15px_rgba(251,191,36,0.2)]" 
+                  "h-11 gap-2 rounded-xl px-4 text-xs font-bold transition-all",
+                  item.is_active
+                    ? "text-amber-400 hover:bg-amber-400/10 hover:shadow-[0_0_15px_rgba(251,191,36,0.2)]"
                     : "text-sky-400 hover:bg-sky-400/10 hover:shadow-[0_0_15px_rgba(56,189,248,0.2)]"
                 )}
               >
-                {item.is_active ? <Snowflake className="h-3.5 w-3.5" /> : <Zap className="h-3.5 w-3.5" />}
+                {item.is_active ? (
+                  <Snowflake className="h-5 w-5" />
+                ) : (
+                  <Zap className="h-5 w-5" />
+                )}
                 {item.is_active ? "تجميد" : "تفعيل"}
               </Button>
-              <div className="mx-1.5 h-4 w-px bg-white/10" />
+
+              <div className="mx-1.5 h-4 w-px bg-border" />
+
               <Button
-                variant="ghost" size="sm" onClick={() => { onDelete(item); onOpenActions(null); }}
-                className="h-9 px-4 gap-2 rounded-xl text-xs font-bold text-red-400 hover:bg-red-400/10 hover:shadow-[0_0_15px_rgba(244,63,94,0.2)]"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  onDelete(item);
+                  onOpenActions(null);
+                }}
+                className="h-11 gap-2 rounded-xl px-4 text-xs font-bold text-rose-500 hover:bg-rose-500/10"
               >
-                <Trash2 className="h-3.5 w-3.5" /> حذف
+                <Trash2 className="h-5 w-5" />
+                حذف
               </Button>
+
               <Button
-                variant="ghost" size="icon" onClick={() => onOpenActions(null)}
-                className="h-9 w-9 rounded-xl text-slate-500 hover:bg-white/10 hover:text-white"
+                variant="ghost"
+                size="icon"
+                onClick={() => onOpenActions(null)}
+                className="h-10 w-10 rounded-xl text-muted-foreground/60 hover:bg-secondary hover:text-foreground"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-4.5 w-4.5" />
               </Button>
             </div>
           )}

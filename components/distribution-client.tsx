@@ -97,15 +97,15 @@ export function DistributionClient({
           onPick={() => setFamilyPickerOpen(true)} 
         />
 
-        <Card className="min-w-0 overflow-hidden rounded-[40px] border border-white/10 bg-[#0F1B33] shadow-2xl">
-          <CardHeader className="border-b border-white/5 bg-[#13213D]/50 pb-8 pt-10 px-6 sm:px-10">
+        <Card>
+          <CardHeader className="border-b border-border bg-secondary/30 pb-8 pt-10 px-6 sm:px-10">
             <div className="flex items-center gap-5">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600/20 to-fuchsia-600/20 text-violet-400 ring-1 ring-violet-500/30 shadow-lg">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] bg-gradient-to-br from-accent/15 to-accent/5 text-accent ring-1 ring-accent/20 shadow-lg">
                 <Package2 className="size-7" />
               </div>
               <div className="min-w-0 space-y-1">
-                <CardTitle className="text-2xl font-black text-[#F8FAFC] font-heading sm:text-3xl">التوزيع الشهري</CardTitle>
-                <CardDescription className="text-sm font-medium text-[#94A3B8] leading-relaxed">
+                <CardTitle className="text-2xl sm:text-3xl lg:text-4xl capitalize text-foreground">التوزيع الشهري</CardTitle>
+                <CardDescription className="text-muted-foreground md:text-base">
                   الحساب تلقائي مع إمكانية تعديل الكمية المسلّمة قبل الحفظ.
                 </CardDescription>
               </div>
@@ -114,7 +114,7 @@ export function DistributionClient({
 
           <CardContent className="space-y-8 p-6 sm:p-8">
             <div className="space-y-6">
-              <div className="inline-flex items-center rounded-full bg-violet-500/10 px-4 py-1.5 text-xs font-bold text-violet-400 ring-1 ring-violet-500/20">
+              <div className="inline-flex items-center rounded-xl bg-violet-500/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-violet-400 ring-1 ring-violet-500/20 shadow-inner">
                 إعدادات التوزيع
               </div>
               <DistributionFormFields
@@ -130,7 +130,7 @@ export function DistributionClient({
             </div>
 
             <div className="space-y-6">
-              <div className="inline-flex items-center rounded-full bg-fuchsia-500/10 px-4 py-1.5 text-xs font-bold text-fuchsia-400 ring-1 ring-fuchsia-500/20">
+              <div className="inline-flex items-center rounded-xl bg-fuchsia-500/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-fuchsia-400 ring-1 ring-fuchsia-500/20 shadow-inner">
                 المواد الموزعة
               </div>
               <div className="space-y-4">
@@ -140,11 +140,11 @@ export function DistributionClient({
             </div>
 
             <div className="space-y-3">
-              <label className="block text-sm font-bold text-[#CBD5E1] pr-1 font-heading">ملاحظات إضافية</label>
+              <label className="block text-sm font-bold text-foreground pr-1 font-heading">ملاحظات إضافية</label>
               <Textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="min-h-[120px] rounded-2xl border border-white/10 bg-white/5 text-[#F8FAFC] placeholder:text-[#526077] focus:border-violet-500/50 focus:ring-violet-500/10 transition-all duration-200"
+                className="min-h-[120px] rounded-2xl border border-border bg-secondary/30 text-foreground placeholder:text-muted-foreground/40 focus:border-accent/50 focus:ring-accent/10 transition-all duration-200"
                 placeholder="أضف أي ملاحظات تخص عملية التوزيع لهذا الشهر..."
               />
             </div>
@@ -160,9 +160,9 @@ export function DistributionClient({
               </div>
             )}
 
-            <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-center sm:justify-between border-t border-white/5">
-              <div className="flex items-center gap-3 text-sm font-medium text-[#94A3B8]">
-                <div className="h-2 w-2 rounded-full bg-violet-500 animate-pulse" />
+            <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:items-center sm:justify-between border-t border-border">
+              <div className="flex items-center gap-3 text-sm font-medium text-muted-foreground">
+                <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
                 راجع الكميات المسلّمة وعدد الأفراد قبل الحفظ.
               </div>
               <Button

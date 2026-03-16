@@ -10,24 +10,24 @@ function getButtonClasses(
   size: Size = "default"
 ) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-2xl font-medium transition whitespace-nowrap disabled:opacity-50 disabled:pointer-events-none";
+    "inline-flex items-center justify-center gap-2 rounded-[20px] font-black transition-all duration-300 relative overflow-hidden whitespace-nowrap disabled:opacity-50 disabled:pointer-events-none active:scale-95";
 
   const variantClasses = {
     default:
-      "bg-gradient-to-l from-violet-600 to-indigo-500 text-white shadow-sm hover:opacity-95",
+      "bg-accent text-accent-foreground shadow-[0_10px_30px_rgba(var(--accent-rgb),0.2)] hover:shadow-[0_15px_40px_rgba(var(--accent-rgb),0.3)] hover:-translate-y-0.5 border border-accent/20",
     outline:
-      "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
+      "border border-border bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground",
     destructive:
-      "border border-red-200 bg-red-50 text-red-600 hover:bg-red-100",
+      "bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-500 hover:bg-red-500/20",
     ghost:
-      "text-slate-700 hover:bg-slate-100",
+      "text-muted-foreground hover:bg-secondary/80 hover:text-foreground",
   };
 
   const sizeClasses = {
-    default: "h-11 px-4 py-2 text-sm",
-    sm: "h-9 px-3 py-2 text-sm",
-    lg: "h-12 px-5 py-3 text-base",
-    icon: "h-10 w-10",
+    default: "h-12 px-6 py-2 text-sm",
+    sm: "h-10 px-4 py-2 text-xs",
+    lg: "h-14 px-8 py-3 text-base shadow-lg",
+    icon: "h-11 w-11",
   };
 
   return `${base} ${variantClasses[variant]} ${sizeClasses[size]}`;

@@ -33,20 +33,17 @@ function SubmitButton() {
     <Button
       type="submit"
       disabled={pending}
-      className="group relative h-14 w-full overflow-hidden rounded-[20px] bg-gradient-to-r from-[#8B5CF6] to-[#D946EF] px-8 text-base font-black text-white shadow-[0_20px_40px_rgba(139,92,246,0.15)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_25px_50px_rgba(139,92,246,0.25)] active:scale-95 disabled:opacity-70"
+      className="group relative h-14 w-full overflow-hidden rounded-[20px] px-8 text-base font-black transition-all duration-300 hover:-translate-y-1 active:scale-95 disabled:opacity-70 shadow-lg shadow-accent/20"
     >
-      {/* Shine effect */}
-      <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
-      
       {pending ? (
         <span className="relative flex items-center justify-center gap-3">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent-foreground border-t-transparent" />
           <span className="tracking-tight">جارٍ الحفظ...</span>
         </span>
       ) : (
         <span className="relative flex items-center justify-center gap-3">
           <CheckCircle2 className="size-5 transition-transform group-hover:scale-110" />
-          <span className="tracking-tight text-white">حفظ جميع البيانات</span>
+          <span className="tracking-tight">حفظ جميع البيانات</span>
         </span>
       )}
     </Button>
@@ -61,8 +58,8 @@ function FieldLabel({
   children: React.ReactNode;
 }) {
   return (
-    <label className="mb-2 flex items-center gap-2 text-xs font-bold text-[#94A3B8] uppercase tracking-wider font-heading sm:text-sm">
-      <span className="text-violet-400/80">{icon}</span>
+    <label className="mb-2 flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-wider font-heading sm:text-sm">
+      <span className="text-accent/80">{icon}</span>
       {children}
     </label>
   );
@@ -70,14 +67,14 @@ function FieldLabel({
 
 function FormSection({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="space-y-5 rounded-[28px] border border-white/10 bg-white/[0.03] p-6 transition-all duration-300 hover:bg-white/[0.05] hover:border-violet-500/20">
-      <div className="flex items-center gap-2.5 text-violet-400">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 ring-1 ring-violet-500/20">
+    <div className="space-y-5 rounded-[32px] border border-border bg-secondary/20 p-6 transition-all duration-300 hover:bg-secondary/40 hover:border-accent/20">
+      <div className="flex items-center gap-3 text-accent">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 ring-1 ring-accent/20 shadow-inner">
           {icon}
         </div>
-        <h4 className="text-xs font-black uppercase tracking-[0.2em] font-heading">{title}</h4>
+        <h4 className="text-sm font-black uppercase tracking-[0.2em] font-heading">{title}</h4>
       </div>
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2">
         {children}
       </div>
     </div>
@@ -112,18 +109,18 @@ export function FamilyForm({
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <Card className="mx-auto w-full max-w-4xl overflow-hidden rounded-[40px] border border-white/10 bg-[#0F1B33] shadow-2xl transition-all duration-300">
-        <CardHeader className="relative border-b border-white/5 bg-gradient-to-l from-[#13213D]/50 via-transparent to-transparent pb-8 pt-10 px-6 sm:px-10">
+      <Card className="mx-auto w-full max-w-4xl shadow-2xl">
+        <CardHeader className="relative border-b border-border bg-secondary/20 pb-8 pt-10 px-6 sm:px-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-5">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600/20 to-fuchsia-600/20 text-violet-400 ring-1 ring-violet-500/30 shadow-lg">
+              <div className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-gradient-to-br from-accent/15 to-accent/5 text-accent ring-1 ring-accent/20 shadow-lg">
                 {family?.id ? <FileEdit className="size-7" /> : <UserPlus className="size-7" />}
               </div>
               <div className="min-w-0 space-y-1">
-                <CardTitle className="text-2xl font-black text-[#F8FAFC] font-heading sm:text-3xl">
+                <CardTitle className="text-2xl font-black text-foreground font-heading sm:text-3xl">
                   {family?.id ? "تعديل العائلة" : "إضافة عائلة جديدة"}
                 </CardTitle>
-                <CardDescription className="text-sm font-medium leading-relaxed text-[#94A3B8] md:text-base">
+                <CardDescription className="text-sm font-medium leading-relaxed text-muted-foreground md:text-base">
                   أدخل بيانات العائلة بدقة لضمان دقة عملية التوزيع الشهرية وتتبع الحصص.
                 </CardDescription>
               </div>
@@ -134,7 +131,7 @@ export function FamilyForm({
               size="icon"
               type="button"
               onClick={handleClose}
-              className="h-10 w-10 shrink-0 rounded-full border border-white/10 bg-white/5 text-[#94A3B8] hover:bg-white/10 hover:text-white transition-all active:scale-95"
+              className="h-10 w-10 shrink-0 rounded-full border border-border bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground transition-all active:scale-95"
             >
               <X className="size-5" />
             </Button>
@@ -153,7 +150,6 @@ export function FamilyForm({
                   name="family_code" 
                   defaultValue={family?.family_code} 
                   required 
-                  className="h-12 rounded-2xl border-white/10 bg-white/5 text-base text-[#F8FAFC] placeholder:text-[#526077] focus:border-violet-500/50 focus:ring-violet-500/10 transition-all font-bold"
                   placeholder="مثال: F-100"
                 />
               </div>
@@ -164,7 +160,6 @@ export function FamilyForm({
                   name="family_name" 
                   defaultValue={family?.family_name} 
                   required 
-                  className="h-12 rounded-2xl border-white/10 bg-white/5 text-base text-[#F8FAFC] placeholder:text-[#526077] focus:border-violet-500/50 focus:ring-violet-500/10 transition-all font-bold"
                   placeholder="مثال: عائلة أحمد محمود"
                 />
               </div>
@@ -177,7 +172,6 @@ export function FamilyForm({
                 <Input 
                   name="phone" 
                   defaultValue={family?.phone ?? ""} 
-                  className="h-12 rounded-2xl border-white/10 bg-white/5 text-base text-[#F8FAFC] placeholder:text-[#526077] focus:border-violet-500/50 focus:ring-violet-500/10 transition-all font-bold"
                   placeholder="اختياري (07xx xxx xxxx)"
                 />
               </div>
@@ -190,7 +184,6 @@ export function FamilyForm({
                   min={1}
                   defaultValue={family?.members_count ?? 1}
                   required
-                  className="h-12 rounded-2xl border-white/10 bg-white/5 text-base text-[#F8FAFC] focus:border-violet-500/50 focus:ring-violet-500/10 transition-all font-bold"
                 />
               </div>
             </FormSection>
@@ -202,7 +195,6 @@ export function FamilyForm({
                 <Input 
                   name="area" 
                   defaultValue={family?.area ?? ""} 
-                  className="h-12 rounded-2xl border-white/10 bg-white/5 text-base text-[#F8FAFC] placeholder:text-[#526077] focus:border-violet-500/50 focus:ring-violet-500/10 transition-all font-bold"
                   placeholder="مثال: الحي العسكري - زقاق 12"
                 />
               </div>
@@ -210,7 +202,7 @@ export function FamilyForm({
 
             {/* Section 4: Status */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2.5 text-violet-400 px-1">
+              <div className="flex items-center gap-2.5 text-accent px-1">
                 <Settings2 className="size-4" />
                 <h4 className="text-xs font-black uppercase tracking-[0.2em] font-heading">الحالة</h4>
               </div>
@@ -232,14 +224,14 @@ export function FamilyForm({
                       checked={isActive}
                       onChange={(e) => setIsActive(e.target.checked)}
                       className={cn(
-                        "size-6 rounded-lg border-white/20 bg-white/5 transition-all ring-offset-0",
-                        isActive ? "text-emerald-500 focus:ring-emerald-500/20" : "text-rose-500 focus:ring-rose-500/20"
+                        "size-6 rounded-lg border-border bg-secondary/40 transition-all ring-offset-0 focus:ring-accent/20",
+                        isActive ? "text-emerald-500" : "text-rose-500"
                       )}
                     />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2.5">
-                      <p className="text-lg font-black text-[#F8FAFC] font-heading leading-none">
+                      <p className="text-lg font-black text-foreground font-heading leading-none">
                         {isActive ? "العائلة فعالة ومستمرة" : "العائلة مجمّدة مؤقتاً"}
                       </p>
                       <span className={cn(
@@ -247,7 +239,7 @@ export function FamilyForm({
                         isActive ? "bg-emerald-500 ring-emerald-500/20 animate-pulse" : "bg-rose-500 ring-rose-500/20"
                       )} />
                     </div>
-                    <p className="mt-2 text-sm font-medium text-[#94A3B8] leading-relaxed max-w-2xl">
+                    <p className="mt-2 text-sm font-medium text-muted-foreground leading-relaxed max-w-2xl">
                       {isActive 
                         ? "سيتم تضمين العائلة في جميع قوائم التوزيع والتقارير الشهرية بشكل تلقائي."
                         : "تم إيقاف استلام الحصص مؤقتاً. لن تظهر في قوائم التوزيع حتى يتم إعادة التفعيل."}
@@ -259,26 +251,26 @@ export function FamilyForm({
 
             {/* Section 5: Notes */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2.5 text-violet-400 px-1">
+              <div className="flex items-center gap-2.5 text-accent px-1">
                 <FileEdit className="size-4" />
                 <h4 className="text-xs font-black uppercase tracking-[0.2em] font-heading">ملاحظات إضافية</h4>
               </div>
               <Textarea 
                 name="notes" 
                 defaultValue={family?.notes ?? ""} 
-                className="min-h-[120px] rounded-[24px] border-white/10 bg-white/5 p-5 text-base text-[#F8FAFC] placeholder:text-[#526077] focus:border-violet-500/50 focus:ring-violet-500/10 transition-all leading-relaxed"
+                className="min-h-[120px] rounded-[24px] border border-border bg-secondary/20 p-5 text-base text-foreground placeholder:text-muted-foreground/40 focus:border-accent/50 focus:ring-accent/10 transition-all leading-relaxed"
                 placeholder="أدخل أي معلومات إضافية أو تنبيهات تخص هذه العائلة..."
               />
             </div>
 
             {/* Actions */}
-            <div className="mt-10 space-y-4 rounded-[32px] border border-white/10 bg-white/[0.02] p-6 sm:p-8">
+            <div className="mt-10 space-y-4 rounded-[32px] border border-border bg-card p-6 sm:p-8 shadow-inner">
               <div className="flex items-center gap-3">
-                <div className="h-px flex-1 bg-gradient-to-l from-violet-500/20 to-transparent" />
-                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[#94A3B8] font-heading">إدارة التغييرات</h4>
-                <div className="h-px flex-1 bg-gradient-to-r from-violet-500/20 to-transparent" />
+                <div className="h-px flex-1 bg-gradient-to-l from-accent/20 to-transparent" />
+                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground font-heading">إدارة التغييرات</h4>
+                <div className="h-px flex-1 bg-gradient-to-r from-accent/20 to-transparent" />
               </div>
-
+ 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <SubmitButton />
                 
@@ -286,13 +278,13 @@ export function FamilyForm({
                   type="button"
                   variant="ghost"
                   onClick={handleClose}
-                  className="h-14 w-full rounded-[20px] border border-white/10 bg-white/5 px-8 text-base font-black text-[#CBD5E1] transition-all hover:bg-white/10 hover:text-white active:scale-95"
+                  className="h-14 w-full rounded-[20px] border border-border bg-secondary/50 px-8 text-base font-black text-muted-foreground transition-all hover:bg-secondary hover:text-foreground active:scale-95"
                 >
                   إلغاء
                 </Button>
               </div>
 
-              <p className="text-center text-[10px] font-bold uppercase tracking-widest text-[#526077]">
+              <p className="text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
                 تأكد من مراجعة كافة البيانات قبل تأكيد الحفظ
               </p>
             </div>

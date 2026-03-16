@@ -51,21 +51,21 @@ export function QuickActions() {
     <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
       {actions.map((action) => (
         <Link key={action.href} href={action.href as any} className="group">
-          <Card className="overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.08] shadow-[0_10px_30px_rgba(0,0,0,0.15)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.12] hover:shadow-[0_15px_40px_rgba(0,0,0,0.3)] sm:rounded-[30px]">
-            <CardContent className="flex flex-col p-4 sm:p-5">
-              <div className="flex items-center justify-between gap-3 sm:gap-4">
+          <Card className="hover:bg-secondary/60">
+            <CardContent className="flex flex-col p-5 sm:p-6">
+              <div className="flex items-center justify-between gap-3">
                 <div className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg ring-1 transition-transform duration-500 group-hover:scale-110 sm:h-12 sm:w-12 sm:rounded-2xl",
+                  "flex h-12 w-12 items-center justify-center rounded-[18px] bg-gradient-to-br shadow-lg ring-1 transition-transform duration-500 group-hover:scale-110",
                   action.color
                 )}>
-                  <action.icon className="size-5 sm:size-6" />
+                  <action.icon className="size-6" />
                 </div>
-                <ArrowLeft className="size-4 opacity-40 transition-transform group-hover:-translate-x-1 group-hover:opacity-100 text-slate-400 sm:size-5" />
+                <ArrowLeft className="size-5 opacity-0 transition-all group-hover:opacity-100 group-hover:-translate-x-1 text-muted-foreground/60" />
               </div>
               
-              <div className="mt-3 sm:mt-4">
-                <h3 className="text-sm font-black text-white sm:text-base">{action.title}</h3>
-                <p className="mt-0.5 text-[10px] font-medium text-slate-400 line-clamp-1 sm:text-xs">{action.description}</p>
+              <div className="mt-4">
+                <h3 className="text-sm font-black text-foreground sm:text-base leading-tight">{action.title}</h3>
+                <p className="mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider line-clamp-1 sm:text-xs">{action.description}</p>
               </div>
             </CardContent>
           </Card>

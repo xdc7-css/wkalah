@@ -44,7 +44,7 @@ export function Pagination({
         <ChevronRight className="size-4" />
       </Button>
 
-      <div className="flex h-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 shadow-sm">
+      <div className="flex h-10 items-center justify-center rounded-xl border border-border bg-secondary/40 px-4 text-sm font-bold text-foreground shadow-sm">
         صفحة {currentPage} من {totalPages}
       </div>
 

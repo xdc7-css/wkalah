@@ -64,19 +64,19 @@ export default async function DashboardPage() {
       <div className="grid gap-6 xl:grid-cols-3">
         {/* Main Chart */}
         <div className="xl:col-span-2">
-          <Card className="h-full overflow-hidden rounded-[30px] border border-white/10 bg-[#0F1B33] shadow-2xl transition-all duration-300">
-            <CardHeader className="border-b border-white/5 bg-white/5 pb-5">
+          <Card className="h-full">
+            <CardHeader className="border-b border-white/5 bg-secondary/30 pb-5">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <CardTitle className="text-xl font-black text-white font-heading">
+                  <CardTitle>
                     المواد الموزعة هذا الشهر
                   </CardTitle>
-                  <CardDescription className="mt-1 text-sm font-medium text-slate-400">
+                  <CardDescription>
                     {monthOptions[stats.month - 1]} {stats.year}
                   </CardDescription>
                 </div>
 
-                <p className="text-xs font-medium text-slate-400 sm:text-sm">
+                <p className="text-xs font-bold text-muted-foreground sm:text-sm">
                   مرّر الماوس على أي مادة للتفاصيل
                 </p>
               </div>

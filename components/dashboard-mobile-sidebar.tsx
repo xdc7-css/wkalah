@@ -51,7 +51,7 @@ export function DashboardMobileSidebar() {
             exit={{ opacity: 0 }}
             type="button"
             aria-label="إغلاق القائمة"
-            className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-background/80 backdrop-blur-[2px]"
             onClick={() => setOpen(false)}
           />
 
@@ -60,19 +60,19 @@ export function DashboardMobileSidebar() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "100%", opacity: 0.5 }}
             transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.8 }}
-            className="absolute right-0 top-0 h-dvh w-[85%] max-w-[320px] bg-[#0A1225]/80 shadow-[0_0_50px_rgba(0,0,0,0.5)] ring-1 ring-white/10 backdrop-blur-2xl sm:w-[340px]"
+            className="absolute right-0 top-0 h-dvh w-[85%] max-w-[320px] bg-background shadow-2xl ring-1 ring-border/5 backdrop-blur-3xl sm:w-[340px]"
           >
             <div className="flex h-full flex-col">
-              <div className="flex items-center justify-between border-b border-white/5 px-6 py-5">
+              <div className="flex items-center justify-between border-b border-border px-6 py-5">
                 <div>
-                  <h3 className="text-xl font-black text-[#F8FAFC] font-heading">القائمة</h3>
-                  <p className="mt-1 text-[11px] font-bold uppercase tracking-widest text-[#94A3B8]">تصفح أقسام النظام</p>
+                  <h3 className="text-xl font-black text-foreground font-heading">القائمة</h3>
+                  <p className="mt-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60">تصفح أقسام النظام</p>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-[#CBD5E1] transition-all duration-300 hover:bg-violet-500/20 hover:text-violet-400"
+                  className="group flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-muted-foreground transition-all duration-300 hover:bg-accent/10 hover:text-accent"
                   aria-label="إغلاق القائمة"
                 >
                   <X className="h-5 w-5 transition-transform group-hover:rotate-90" />
@@ -102,7 +102,7 @@ export function DashboardMobileSidebar() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-white shadow-lg backdrop-blur-md transition-all hover:bg-white/20 lg:hidden"
+        className="flex h-12 w-12 items-center justify-center rounded-[18px] border border-border bg-card text-foreground shadow-xl backdrop-blur-xl transition-all hover:bg-secondary active:scale-95 lg:hidden"
         aria-label="فتح القائمة"
       >
         <Menu className="h-6 w-6" />

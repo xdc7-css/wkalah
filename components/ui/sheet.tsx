@@ -18,7 +18,7 @@ const SheetOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-slate-950/45 backdrop-blur-sm",
+      "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm",
       "data-[state=open]:animate-in data-[state=closed]:animate-out",
       "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
@@ -29,7 +29,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 const sheetVariants = cva(
-  "fixed z-50 bg-white shadow-2xl transition ease-in-out",
+  "fixed z-50 bg-background shadow-2xl transition ease-in-out",
   {
     variants: {
       side: {
@@ -80,9 +80,9 @@ const SheetContent = React.forwardRef<
 
       <DialogPrimitive.Close
         className={cn(
-          "absolute left-4 top-4 rounded-xl p-2 text-slate-500 transition-colors",
-          "hover:bg-slate-100 hover:text-slate-900",
-          "focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+          "absolute left-4 top-4 rounded-xl p-2 text-muted-foreground transition-colors",
+          "hover:bg-secondary hover:text-foreground",
+          "focus:outline-none focus:ring-2 focus:ring-accent/30"
         )}
       >
         <X className="h-4 w-4" />
@@ -121,7 +121,7 @@ const SheetTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-extrabold text-slate-900", className)}
+    className={cn("text-lg font-extrabold text-foreground", className)}
     {...props}
   />
 ));
@@ -133,7 +133,7 @@ const SheetDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm leading-6 text-slate-500", className)}
+    className={cn("text-sm leading-6 text-muted-foreground", className)}
     {...props}
   />
 ));

@@ -36,23 +36,23 @@ export function DashboardSidebar() {
 
   return (
     <div className="flex h-full flex-col p-5">
-      <div className="mb-10 overflow-hidden rounded-[32px] border border-white/10 bg-[#0F1B33]/60 p-4 shadow-xl ring-1 ring-white/5 backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600/20 to-indigo-600/10 shadow-lg ring-1 ring-violet-400/20">
+      <div className="mb-10 overflow-hidden rounded-[32px] border border-border bg-card shadow-xl ring-1 ring-border/5">
+        <div className="flex items-center gap-4 p-5">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[20px] bg-accent/10 shadow-lg ring-1 ring-accent/20">
             <Image
               src="/icons/items/calculator.png"
               alt="logo"
               width={56}
               height={56}
-              className="h-10 w-10 object-contain brightness-110 transition-transform duration-500 hover:rotate-12"
+              className="h-10 w-10 object-contain brightness-110 transition-transform duration-500 hover:rotate-12 dark:brightness-125"
             />
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="text-right text-[15px] font-black leading-snug text-[#F8FAFC] font-heading">
+            <p className="text-right text-base font-black leading-snug text-foreground font-heading">
               {APP_NAME}
             </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-[#94A3B8]">إدارة داخلية خاصة</p>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">إدارة داخلية خاصة</p>
           </div>
         </div>
       </div>
@@ -67,15 +67,15 @@ export function DashboardSidebar() {
               key={link.href}
               href={link.href}
               className={cn(
-                "group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-300",
+                "group flex items-center gap-3 rounded-[20px] px-5 py-3.5 text-sm font-bold transition-all duration-300",
                 active
-                  ? "bg-gradient-to-r from-violet-600 to-indigo-500 text-white shadow-[0_8px_20px_rgba(124,58,237,0.3)]"
-                  : "text-slate-400 hover:bg-white/5 hover:text-white"
+                  ? "bg-accent text-accent-foreground shadow-lg active:scale-95 shadow-accent/20"
+                  : "text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
               )}
             >
               <Icon className={cn(
                 "size-5 shrink-0 transition-transform duration-300 group-hover:scale-110",
-                active ? "text-white" : "text-slate-500 group-hover:text-violet-400"
+                active ? "text-accent-foreground" : "text-muted-foreground/60 group-hover:text-accent"
               )} />
               <span>{link.label}</span>
             </Link>
@@ -84,9 +84,9 @@ export function DashboardSidebar() {
       </nav>
 
       <div className="mt-auto pt-8">
-        <div className="rounded-2xl bg-gradient-to-br from-violet-600/10 to-indigo-500/5 p-4 ring-1 ring-white/5">
-          <p className="text-xs font-bold text-violet-400">النظام الموحد</p>
-          <p className="mt-1 text-[10px] text-slate-500 leading-relaxed">
+        <div className="rounded-2xl border border-border bg-accent/10 p-4 ring-1 ring-accent/5">
+          <p className="text-xs font-bold text-accent">النظام الموحد</p>
+          <p className="mt-1 text-[10px] text-muted-foreground/50 leading-relaxed">
             تأكد من مراجعة التقارير الدورية لضمان دقة البيانات الموزعة.
           </p>
         </div>

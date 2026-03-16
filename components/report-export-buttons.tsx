@@ -16,7 +16,7 @@ export function ReportExportButtons({
         className={buttonVariants({
           variant: "outline",
           className:
-            "inline-flex h-11 items-center gap-2 rounded-2xl border-slate-200 bg-white text-slate-700 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700",
+            "inline-flex h-11 items-center gap-2 rounded-2xl border-border bg-secondary text-muted-foreground shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/30 hover:bg-accent/10 hover:text-accent",
         })}
       >
         <FileSpreadsheet className="size-4" />
@@ -28,7 +28,7 @@ export function ReportExportButtons({
         className={buttonVariants({
           variant: "outline",
           className:
-            "inline-flex h-11 items-center gap-2 rounded-2xl border-slate-200 bg-white text-slate-700 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700",
+            "inline-flex h-11 items-center gap-2 rounded-2xl border-border bg-secondary text-muted-foreground shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/30 hover:bg-accent/10 hover:text-accent",
         })}
       >
         <Download className="size-4" />

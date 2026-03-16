@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Alexandria, Tajawal } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const headFont = Alexandria({
   subsets: ["arabic"],
@@ -47,8 +48,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl" className={`${headFont.variable} ${bodyFont.variable}`}>
-      <body className="font-body">{children}</body>
+    <html lang="ar" dir="rtl" className={`${headFont.variable} ${bodyFont.variable}`} suppressHydrationWarning>
+      <body className="font-body">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

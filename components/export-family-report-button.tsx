@@ -45,7 +45,7 @@ export function ExportFamilyReportButton({
       onClick={handleExport}
       variant="outline"
       disabled={loading}
-      className="h-11 w-full gap-2 rounded-2xl border-white/10 bg-white/5 text-slate-300 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-violet-500/30 hover:bg-violet-500/10 hover:text-violet-400 sm:w-auto"
+      className="h-11 w-full gap-2 rounded-2xl border-border bg-secondary text-muted-foreground shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/30 hover:bg-accent/10 hover:text-accent sm:w-auto"
     >
       {loading ? (
         <Loader2 className="size-4 animate-spin" />

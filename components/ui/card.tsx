@@ -5,7 +5,7 @@ type DivProps = React.HTMLAttributes<HTMLDivElement>;
 export function Card({ className = "", ...props }: DivProps) {
   return (
     <div
-      className={`rounded-[28px] border border-slate-200/70 bg-white/85 shadow-sm ${className}`}
+      className={`rounded-[28px] border border-border bg-card shadow-sm ${className}`}
       {...props}
     />
   );
@@ -18,7 +18,7 @@ export function CardHeader({ className = "", ...props }: DivProps) {
 export function CardTitle({ className = "", ...props }: DivProps) {
   return (
     <h3
-      className={`text-lg font-bold text-slate-900 sm:text-xl ${className}`}
+      className={`text-lg font-bold text-foreground sm:text-xl font-heading ${className}`}
       {...props}
     />
   );
@@ -27,7 +27,7 @@ export function CardTitle({ className = "", ...props }: DivProps) {
 export function CardDescription({ className = "", ...props }: DivProps) {
   return (
     <p
-      className={`mt-1 text-sm text-slate-500 ${className}`}
+      className={`mt-1 text-sm text-muted-foreground ${className}`}
       {...props}
     />
   );

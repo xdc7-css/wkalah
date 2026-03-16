@@ -99,27 +99,27 @@ export function QuickDistForm({
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      <Card className="overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.08] backdrop-blur-xl shadow-xl">
-        <CardHeader className="bg-white/5 pb-5 border-b border-white/5">
-          <CardTitle className="text-lg text-white">بحث برمز العائلة</CardTitle>
-          <CardDescription className="text-slate-400">أدخل كود العائلة للبدء بالتوزيع الفوري</CardDescription>
+      <Card className="overflow-hidden rounded-[30px] border border-border bg-card shadow-xl">
+        <CardHeader className="bg-secondary/20 pb-5 border-b border-border">
+          <CardTitle className="text-lg text-foreground">بحث برمز العائلة</CardTitle>
+          <CardDescription className="text-muted-foreground/60">أدخل كود العائلة للبدء بالتوزيع الفوري</CardDescription>
         </CardHeader>
         <CardContent className="pt-6">
           <form onSubmit={handleSearch} className="flex gap-3">
             <div className="relative flex-1">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40" />
               <Input
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="أدخل رمز العائلة (مثلاً: ١٠٠١)..."
-                className="h-12 pr-10 rounded-2xl border-white/10 bg-white/5 text-white placeholder:text-slate-600 focus:border-violet-500/50 focus:ring-4 focus:ring-violet-500/10"
+                className="h-12 pr-10 rounded-2xl border-border bg-secondary/40 text-foreground placeholder:text-muted-foreground/30 focus:border-accent/40 focus:ring-4 focus:ring-accent/5"
                 autoFocus
               />
             </div>
             <Button 
               type="submit" 
               disabled={isSearching || !code.trim()}
-              className="h-12 px-6 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-bold shadow-lg shadow-violet-600/20 active:scale-95 transition-all"
+              className="h-12 px-6 rounded-2xl font-bold shadow-lg shadow-accent/20 active:scale-95 transition-all"
             >
               {isSearching ? "جاري البحث..." : "بحث"}
             </Button>
@@ -135,7 +135,7 @@ export function QuickDistForm({
       )}
 
       {success && (
-        <div className="flex items-center gap-3 rounded-[20px] bg-emerald-500/10 p-4 border border-emerald-500/20 text-emerald-400 animate-in fade-in zoom-in duration-300">
+        <div className="flex items-center gap-3 rounded-[20px] bg-emerald-500/10 p-4 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 animate-in fade-in zoom-in duration-300">
           <CheckCircle2 className="size-5 shrink-0" />
           <p className="text-sm font-bold">{success}</p>
         </div>
@@ -143,16 +143,16 @@ export function QuickDistForm({
 
       {selectedFamily && (
         <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
-          <Card className="overflow-hidden rounded-[30px] border border-violet-500/20 bg-violet-500/5 shadow-xl">
+          <Card className="overflow-hidden rounded-[30px] border border-accent/20 bg-accent/5 shadow-xl">
             <CardContent className="p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-violet-600 shadow-lg text-white ring-4 ring-violet-600/20">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-accent shadow-lg text-accent-foreground ring-4 ring-accent/20">
                     <User className="size-7" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-black text-white">{selectedFamily.family_name}</h2>
-                    <div className="mt-1 flex gap-3 text-xs font-bold text-slate-400 uppercase">
+                    <h2 className="text-xl font-black text-foreground">{selectedFamily.family_name}</h2>
+                    <div className="mt-1 flex gap-3 text-xs font-bold text-muted-foreground/60 uppercase">
                       <span>كود: {toArabicDigits(selectedFamily.family_code)}</span>
                       <span>•</span>
                       <span>{toArabicDigits(selectedFamily.members_count)} أفراد</span>
@@ -160,16 +160,16 @@ export function QuickDistForm({
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-2 rounded-2xl bg-white/5 p-2 border border-white/10 shadow-sm">
+                <div className="flex items-center gap-2 rounded-2xl bg-secondary/40 p-2 border border-border shadow-sm">
                    <div className="px-3">
-                     <p className="text-[10px] font-bold text-slate-500 uppercase">الكمية المقدرة لـ</p>
-                     <p className="text-sm font-black text-white">{toArabicDigits(membersCount)} أفراد</p>
+                     <p className="text-[10px] font-bold text-muted-foreground/50 uppercase">الكمية المقدرة لـ</p>
+                     <p className="text-sm font-black text-foreground">{toArabicDigits(membersCount)} أفراد</p>
                    </div>
                    <Input
                      type="number"
                      value={membersCount}
                      onChange={(e) => setMembersCount(Number(e.target.value))}
-                     className="w-16 h-10 rounded-xl border-white/10 bg-white/5 text-white text-center font-bold focus:border-violet-500/50 focus:ring-4 focus:ring-violet-500/10"
+                     className="w-16 h-10 rounded-xl border-border bg-secondary/40 text-foreground text-center font-bold focus:border-accent/40 focus:ring-4 focus:ring-accent/5"
                      min={1}
                    />
                 </div>
@@ -177,11 +177,11 @@ export function QuickDistForm({
             </CardContent>
           </Card>
 
-          <Card className="overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.08] backdrop-blur-xl shadow-xl">
-             <CardHeader className="border-b border-white/5 bg-white/5 pb-5">
+          <Card className="overflow-hidden rounded-[32px] border border-border bg-card shadow-xl">
+             <CardHeader className="border-b border-border bg-secondary/20 pb-5">
                <div className="flex items-center gap-3">
-                 <Package2 className="size-5 text-violet-400" />
-                 <CardTitle className="text-lg text-white">تأكيد الكميات</CardTitle>
+                 <Package2 className="size-5 text-accent" />
+                 <CardTitle className="text-lg text-foreground">تأكيد الكميات</CardTitle>
                </div>
              </CardHeader>
              <CardContent className="p-0 sm:p-6 lg:p-8">

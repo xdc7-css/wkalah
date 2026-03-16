@@ -142,9 +142,9 @@ export function ImportFamiliesClient() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-3xl border bg-white/70 p-4">
+        <div className="rounded-3xl border border-border bg-card p-4">
           <p className="text-sm text-muted-foreground">إجمالي الصفوف</p>
-          <p className="mt-2 text-2xl font-bold">{rows.length}</p>
+          <p className="mt-2 text-2xl font-bold text-foreground">{rows.length}</p>
         </div>
 
         <div className="rounded-3xl border bg-white/70 p-4">
@@ -159,12 +159,12 @@ export function ImportFamiliesClient() {
       </div>
 
       {errors.length > 0 ? (
-        <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4">
-          <div className="mb-3 flex items-center gap-2 text-amber-700">
+        <div className="rounded-3xl border border-amber-500/20 bg-amber-500/10 p-4">
+          <div className="mb-3 flex items-center gap-2 text-amber-500">
             <AlertTriangle className="size-4" />
             <p className="font-medium">ملاحظات قبل الاستيراد</p>
           </div>
-          <div className="space-y-1 text-sm text-amber-800">
+          <div className="space-y-1 text-sm text-amber-600 dark:text-amber-400">
             {errors.slice(0, 10).map((error, index) => (
               <p key={index}>{error}</p>
             ))}
@@ -173,7 +173,7 @@ export function ImportFamiliesClient() {
       ) : null}
 
       {rows.length > 0 ? (
-        <div className="rounded-3xl border bg-white/70 p-4">
+        <div className="rounded-3xl border border-border bg-card p-4">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-base font-semibold">معاينة البيانات</h3>
             <Button onClick={handleImport} disabled={isPending || validRows.length === 0}>
@@ -213,13 +213,13 @@ export function ImportFamiliesClient() {
       ) : null}
 
       {result?.error ? (
-        <div className="rounded-3xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-3xl border border-rose-500/20 bg-rose-500/10 p-4 text-sm text-rose-600 dark:text-rose-400">
           {result.error}
         </div>
       ) : null}
 
       {result?.success ? (
-        <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+        <div className="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-600 dark:text-emerald-400">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="size-4" />
             <span>{result.success}</span>

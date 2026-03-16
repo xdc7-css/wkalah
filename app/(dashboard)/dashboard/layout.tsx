@@ -7,10 +7,10 @@ export default function DashboardLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-950">
+    <div className="relative min-h-screen overflow-hidden bg-background">
       
       {/* Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.18),transparent_22%),radial-gradient(circle_at_top_left,rgba(59,130,246,0.14),transparent_28%),linear-gradient(to_bottom,rgba(15,23,42,1),rgba(15,23,42,0.96),rgba(2,6,23,1))]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--accent)/0.12),transparent_22%),radial-gradient(circle_at_top_left,hsl(var(--primary)/0.08),transparent_28%),linear-gradient(to_bottom,hsl(var(--background)),hsl(var(--background)/0.98))]" />
 
       <div className="absolute inset-0 opacity-[0.06]">
         <svg
@@ -22,15 +22,15 @@ export default function DashboardLayout({
         >
           <defs>
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.8" />
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.8" className="opacity-[0.1]" />
             </pattern>
           </defs>
           <rect width="1440" height="900" fill="url(#grid)" />
         </svg>
       </div>
 
-      <div className="absolute -top-24 right-[-80px] h-72 w-72 rounded-full bg-violet-500/20 blur-3xl" />
-      <div className="absolute bottom-[-80px] left-[-60px] h-72 w-72 rounded-full bg-fuchsia-500/10 blur-3xl" />
+      <div className="absolute -top-24 right-[-80px] h-72 w-72 rounded-full bg-accent/10 blur-[120px]" />
+      <div className="absolute bottom-[-80px] left-[-60px] h-72 w-72 rounded-full bg-primary/5 blur-[120px]" />
 
       <div className="relative mx-auto max-w-[1600px] p-3 sm:p-4 lg:p-6">
         <div className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)] xl:gap-6">

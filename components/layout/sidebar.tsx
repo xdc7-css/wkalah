@@ -34,14 +34,14 @@ export function Sidebar() {
   return (
     <>
       <div className="mb-4 lg:hidden">
-        <div className="glass rounded-3xl border border-white/60 p-3 shadow-glass">
-          <div className="mb-3 flex items-center gap-3 rounded-2xl bg-white/70 p-3">
+        <div className="rounded-3xl border border-border p-3 bg-card shadow-sm">
+          <div className="mb-3 flex items-center gap-3 rounded-2xl bg-secondary/50 p-3">
             <div className="rounded-2xl bg-primary/10 p-2">
               <Image src="/icon.png" alt="logo" width={48} height={48} />
             </div>
 
             <div className="min-w-0">
-              <p className="truncate font-semibold">{APP_NAME}</p>
+              <p className="truncate font-semibold text-foreground">{APP_NAME}</p>
               <p className="text-xs text-muted-foreground">إدارة داخلية خاصة</p>
             </div>
           </div>
@@ -59,8 +59,8 @@ export function Sidebar() {
                   className={cn(
                     "flex min-h-16 flex-col items-center justify-center gap-2 rounded-2xl px-3 py-3 text-center text-xs font-medium transition",
                     active
-                      ? "bg-primary text-white shadow-soft"
-                      : "bg-white/70 hover:bg-white"
+                      ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20"
+                      : "bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground"
                   )}
                 >
                   <Icon className="size-4 shrink-0" />
@@ -72,14 +72,14 @@ export function Sidebar() {
         </div>
       </div>
 
-      <aside className="glass sticky top-4 hidden h-[calc(100vh-2rem)] w-72 shrink-0 flex-col rounded-3xl border border-white/60 p-4 shadow-glass lg:flex">
-        <div className="mb-8 flex items-center gap-3 rounded-2xl bg-white/70 p-4">
+      <aside className="sticky top-4 hidden h-[calc(100vh-2rem)] w-72 shrink-0 flex-col rounded-3xl border border-border p-4 bg-card shadow-sm lg:flex">
+        <div className="mb-8 flex items-center gap-3 rounded-2xl bg-secondary/50 p-4">
           <div className="rounded-2xl bg-primary/10 p-2">
             <Image src="/icon.png" alt="logo" width={64} height={64} />
           </div>
 
           <div className="min-w-0">
-            <p className="truncate font-semibold">{APP_NAME}</p>
+            <p className="truncate font-semibold text-foreground">{APP_NAME}</p>
             <p className="text-xs text-muted-foreground">إدارة داخلية خاصة</p>
           </div>
         </div>
@@ -97,8 +97,8 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition",
                   active
-                    ? "bg-primary text-white shadow-soft"
-                    : "hover:bg-white/70"
+                    ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20"
+                    : "hover:bg-secondary/80 text-muted-foreground hover:text-foreground"
                 )}
               >
                 <Icon className="size-4 shrink-0" />
